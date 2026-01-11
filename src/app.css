@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
-  font-family: "Montserrat", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Arial, system-ui, Avenir, Helvetica, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -27,15 +27,10 @@ a:hover {
 }
 
 body {
-  margin: 0;
   display: flex;
+  margin: 0;
   min-width: 320px;
   min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
 }
 
 .card {
@@ -58,11 +53,11 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: filter 0.25s;
 }
 
 button:hover {
-  border-color: #646cff;
+  filter: brightness(0.8);
 }
 
 button:focus,
