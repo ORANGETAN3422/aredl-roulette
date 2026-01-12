@@ -1,34 +1,35 @@
 <script lang="ts">
+    import { getRand, getRandInt32 } from "../helpers/rng";
+    import { createNewRun } from "../helpers/createList";
+
     let isSaveLoaded = false;
-    let currentSeed = 0;
+    let currentSeed = getRandInt32();
 
-    function sfc32(a: number, b: number, c: number, d: number) {
-        a |= 0;
-        b |= 0;
-        c |= 0;
-        d |= 0;
-        let t = (((a + b) | 0) + d) | 0;
-        d = (d + 1) | 0;
-        a = b ^ (b >>> 9);
-        b = (c + (c << 3)) | 0;
-        c = (c << 21) | (c >>> 11);
-        c = (c + t) | 0;
-        return (t >>> 0) / 4294967296;
+    let startingRange = 0;
+    let endingRange = 0;
+
+    function runChecks() {
+        let rangeIsZero = startingRange === 0 && endingRange === 0;
+        if (startingRange < 0 || endingRange < 0) {
+            document.getElementById("range-error")!.textContent =
+                "Ranges must be non-negative.";
+            return;
+        }
+        if (!rangeIsZero && endingRange - startingRange < 100) {
+            document.getElementById("range-error")!.textContent =
+                "Range must be at least 100.";
+            return;
+        }
+
+        document.getElementById("range-error")!.textContent = "";
+        document.getElementById("seed-error")!.textContent = "";
+        createNewRun(currentSeed, startingRange, endingRange);
     }
 
-    function getRand(seed: number) {
-        let a = seed | 0;
-        let b = (seed ^ 0xdeadbeef) >>> 0;
-        let c = (seed ^ 0xcafebabe) >>> 0;
-        let d = (seed ^ 0xfaceb00c) >>> 0;
-
-        return sfc32(a, b, c, d);
-    }
-
-    function randomiseSeed() {
-        currentSeed = Math.floor(Math.random() * 4294967295);
-    }
-    randomiseSeed();
+    /*async function startRun(rangeIsZero: boolean) {
+        console.log("Starting run with seed:", currentSeed);
+        console.log("Fetching from Aredl...");
+    }*/
 </script>
 
 <div class="start-menu">
@@ -38,17 +39,42 @@
         <label for="legacy">Include Legacy Levels</label>
         <br />
         <input type="checkbox" name="duo" id="duo" />
-        <label for="duo">Include Duo Mode</label>
+        <label for="duo">Include 2P Levels</label>
     </div>
 
     <br />
 
     <div class="range">
-        <input type="number" name="start" id="start" class="range-input" />
+        <p class="subtext">
+            Keep both values as 0 for all AREDL levels to be included
+        </p>
+        <input
+            type="number"
+            name="start"
+            id="start"
+            class="number-input"
+            placeholder="Starting Range"
+            bind:value={startingRange}
+            onkeypress={(e) => {
+                if (!/[0-9]/.test(e.key)) e.preventDefault();
+            }}
+        />
         <label for="start">Starting Range</label>
         <br />
-        <input type="number" name="end" id="end" class="range-input" />
+        <input
+            type="number"
+            name="end"
+            id="end"
+            class="number-input"
+            placeholder="Ending Range"
+            bind:value={endingRange}
+            onkeypress={(e) => {
+                if (!/[0-9]/.test(e.key)) e.preventDefault();
+            }}
+        />
         <label for="end">Ending Range</label>
+        <br />
+        <p class="subtext error-message" id="range-error"></p>
     </div>
 
     <br />
@@ -58,18 +84,27 @@
             type="number"
             name="seed"
             id="seed"
-            class="range-input"
+            class="number-input"
+            placeholder="Seed"
             bind:value={currentSeed}
+            onkeypress={(e) => {
+                if (!/[0-9]/.test(e.key)) e.preventDefault();
+            }}
         />
         <label for="start">Seed</label>
         <br />
-        <button class="random-seed-btn" onclick={randomiseSeed}
-            >Random Seed</button
+        <button
+            class="random-seed-btn"
+            onclick={() => {
+                currentSeed = getRandInt32();
+            }}>Random Seed</button
         >
+        <br />
+        <p class="subtext error-message" id="seed-error"></p>
     </div>
 
     <div class="start-menu-buttons">
-        <button class="start-btn">Start</button>
+        <button class="start-btn" onclick={runChecks}>Start</button>
         <button class="load-btn">Load Save</button>
     </div>
     <br />
@@ -112,7 +147,7 @@
         margin-bottom: 10px;
     }
 
-    .range-input {
+    .number-input {
         background-color: rgba(0, 0, 0, 0.3);
         border-radius: 5px;
         margin-bottom: 5px;
@@ -139,5 +174,9 @@
     .subtext {
         color: #888;
         font-size: 0.8em;
+    }
+
+    .error-message {
+        color: red;
     }
 </style>
