@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     const { id } = req.query;
 
     try {
-        const response = await fetch(`https://api.aredl.net/v2/levels/${id}`);
+        const response = await fetch(`https://api.aredl.net/v2/api/aredl/levels/${id}`);
         const data = await response.json();
 
         res.setHeader('Access-Control-Allow-Origin', '*');
