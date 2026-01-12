@@ -4,6 +4,7 @@ export interface SaveFile {
     startRange: number;
     endRange: number;
     current: number;
+    current_percentage: number;
     levels: Level[];
 }
 
@@ -11,10 +12,6 @@ export interface Level {
     name: string;
     position: number;
     level_id: number;
-}
-
-export function StartRun(save: SaveFile) {
-
 }
 
 export function downloadSave(save: string) {
@@ -30,7 +27,7 @@ export function downloadSave(save: string) {
 }
 
 export function encodeSave(save: any) {
-    let s = save;
+    let s = structuredClone(save);
     let levelsTrimmed: any[] = [];
     s.levels.forEach((level: Level) => {
         levelsTrimmed.push([btoa(level.name), (level.position).toString(36), (level.level_id).toString(36)]);
@@ -44,27 +41,29 @@ export function encodeSave(save: any) {
     s.date = (Date.parse(s.date)).toString(36);
 
     let string = JSON.stringify(s);
-    string = string.replaceAll('"],["', "+");
-    string = string.replaceAll('","', "^");
-    string = string.replace("seed", "s-");
-    string = string.replace("startRange", "sr-");
-    string = string.replace("endRange", "er-");
-    string = string.replace("current", "c-");
-    string = string.replace("date", "d-");
-    string = string.replace("levels", "l-");
+    string = string.replaceAll('"],["', '+');
+    string = string.replaceAll('","', '-');
+    string = string.replace("seed", "!");
+    string = string.replace("startRange", "@");
+    string = string.replace("endRange", "#");
+    string = string.replace("current", "$");
+    string = string.replace("date", "%");
+    string = string.replace("levels", "&");
+    string = string.replace("current_percentage", "*")
 
     return string;
 }
 
 export function decodeSave(save: string) {
     let cleanedSave = save.replaceAll('+', '"],["');
-    cleanedSave = cleanedSave.replaceAll('^', '","');
-    cleanedSave = cleanedSave.replace("s-", "seed");
-    cleanedSave = cleanedSave.replace("sr-", "startRange");
-    cleanedSave = cleanedSave.replace("er-", "endRange");
-    cleanedSave = cleanedSave.replace("c-", "current");
-    cleanedSave = cleanedSave.replace("d-", "date");
-    cleanedSave = cleanedSave.replace("l-", "levels");
+    cleanedSave = cleanedSave.replaceAll('-', '","');
+    cleanedSave = cleanedSave.replace("!", "seed");
+    cleanedSave = cleanedSave.replace("@", "startRange");
+    cleanedSave = cleanedSave.replace("#", "endRange");
+    cleanedSave = cleanedSave.replace("$", "current");
+    cleanedSave = cleanedSave.replace("%", "date");
+    cleanedSave = cleanedSave.replace("&", "levels");
+    cleanedSave = cleanedSave.replace("*", "current_percentage")
 
     let parsedSave: any = JSON.parse(cleanedSave);
     parsedSave.seed = parseInt(parsedSave.seed, 36);

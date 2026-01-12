@@ -5,6 +5,18 @@ export const listCreationStatus = writable<string>("idle");
 export const rouletteStatus = writable<string>("creating");
 export const currentSaveFile = writable<SaveFile | null>(null);
 
-listCreationStatus.subscribe((value) => {
-    console.log(value);
-});
+// listCreationStatus.subscribe((value) => {
+//     console.log(value);
+// });
+
+export function startRun(save: SaveFile) {
+    currentSaveFile.set(save);
+    listCreationStatus.set("finished");
+    rouletteStatus.set("started");
+}
+
+export function resetRun() {
+    currentSaveFile.set(null);
+    listCreationStatus.set("idle");
+    rouletteStatus.set("creating");
+}

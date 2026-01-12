@@ -1,6 +1,7 @@
 import { currentSaveFile, listCreationStatus } from "./statusStore";
 import { createRNG } from "./rng";
-import { type SaveFile, type Level, encodeSave, decodeSave, downloadSave } from "./saving";
+import { type SaveFile, type Level } from "./saving";
+import { startRun } from "./statusStore";
 
 let levelsEndpoint = "https://aredl-roulette.vercel.app/api/aredl/levels";
 
@@ -60,12 +61,10 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
         startRange: startRange,
         endRange: endRange,
         current: 1,
+        current_percentage: 1,
         levels: trimmedArray
     };
-    currentSaveFile.set(saveFile);
-    listCreationStatus.set("Finished Creating Run");
-    //downloadSave(encodeSave(saveFile));
-    decodeSave(encodeSave(saveFile));
+    startRun(saveFile);
 }
 
 async function fetchLevels() {

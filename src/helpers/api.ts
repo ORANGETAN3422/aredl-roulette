@@ -1,4 +1,5 @@
 let levelEndpoint = "https://aredl-roulette.vercel.app/api/gdbrowser/";
+let aredlEndpoint = "https://api.aredl.net/v2"
 
 export async function fetchLevel(id: number) {
     try {

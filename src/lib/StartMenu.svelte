@@ -1,8 +1,13 @@
 <script lang="ts">
     import { getRandInt32 } from "../helpers/rng";
     import { createNewRun } from "../helpers/createList";
-    import { listCreationStatus, rouletteStatus } from "../helpers/statusStore";
-    import { decodeSave, encodeSave } from "../helpers/saving";
+    import {
+        currentSaveFile,
+        listCreationStatus,
+        rouletteStatus,
+        startRun,
+    } from "../helpers/statusStore";
+    import { decodeSave } from "../helpers/saving";
 
     let isSaveLoaded = false;
     let currentSeed = getRandInt32();
@@ -27,7 +32,7 @@
         }
 
         const text = await file.text();
-        console.log(decodeSave(text));
+        startRun(decodeSave(text));
     }
 
     function runChecks() {
@@ -58,10 +63,6 @@
             includeLegacy,
             includeDuo,
         );
-    }
-
-    $: if ($listCreationStatus === "Finished Creating Run") {
-        rouletteStatus.set("ready");
     }
 </script>
 
@@ -163,7 +164,7 @@
 
 <style>
     .start-menu {
-        margin-top: 20px;
+        margin-top: 120px;
         display: flex;
         flex-direction: column;
 
@@ -171,6 +172,7 @@
         max-width: 600px;
         min-width: 320px;
         min-height: 350px;
+        max-height: 480px;
 
         background-color: #222;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -230,5 +232,11 @@
 
     .error-message {
         color: red;
+    }
+
+    @media (max-width: 830px) {
+        .start-menu {
+            margin-top: 170px;
+        }
     }
 </style>

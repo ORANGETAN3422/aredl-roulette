@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     const { id } = req.query;
 
     try {
-        const response = await fetch(`https://gdbrowser.com/api/level/${id}`);
+        const response = await fetch(`https://api.aredl.net/v2/${id}`);
         const data = await response.json();
 
         res.setHeader('Access-Control-Allow-Origin', '*');
