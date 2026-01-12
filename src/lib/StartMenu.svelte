@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { getRand, getRandInt32 } from "../helpers/rng";
+    import { getRandInt32 } from "../helpers/rng";
     import { createNewRun } from "../helpers/createList";
+    import { listCreationStatus, rouletteStatus } from "../helpers/statusStore";
 
     let isSaveLoaded = false;
     let currentSeed = getRandInt32();
@@ -21,95 +22,114 @@
             return;
         }
 
+        let includeLegacy = (
+            document.getElementById("legacy") as HTMLInputElement
+        ).checked;
+        let includeDuo = (document.getElementById("duo") as HTMLInputElement)
+            .checked;
+
         document.getElementById("range-error")!.textContent = "";
         document.getElementById("seed-error")!.textContent = "";
-        createNewRun(currentSeed, startingRange, endingRange);
+        createNewRun(
+            currentSeed,
+            startingRange,
+            endingRange,
+            includeLegacy,
+            includeDuo,
+        );
     }
 
-    /*async function startRun(rangeIsZero: boolean) {
-        console.log("Starting run with seed:", currentSeed);
-        console.log("Fetching from Aredl...");
-    }*/
+    $: if ($listCreationStatus === "Finished Creating Run") {
+        rouletteStatus.set("ready");
+    }
 </script>
 
-<div class="start-menu">
-    <h2>Start New Run <br /> or Load Save</h2>
-    <div class="options">
-        <input type="checkbox" name="legacy" id="legacy" />
-        <label for="legacy">Include Legacy Levels</label>
-        <br />
-        <input type="checkbox" name="duo" id="duo" />
-        <label for="duo">Include 2P Levels</label>
+{#if $rouletteStatus === "creating"}
+    <div class="start-menu">
+        {#if $listCreationStatus !== "idle"}
+            <p>{$listCreationStatus}</p>
+        {:else if $listCreationStatus === "idle"}
+            <h2>Start New Run <br /> or Load Save</h2>
+            <div class="options">
+                <input type="checkbox" name="legacy" id="legacy" />
+                <label for="legacy">Include Legacy Levels</label>
+                <br />
+                <input type="checkbox" name="duo" id="duo" />
+                <label for="duo">Include 2P Levels</label>
+            </div>
+
+            <br />
+
+            <div class="range">
+                <p class="subtext">
+                    Keep both values as 0 for all AREDL levels to be included
+                </p>
+                <input
+                    type="number"
+                    name="start"
+                    id="start"
+                    class="number-input"
+                    placeholder="Starting Range"
+                    bind:value={startingRange}
+                    onkeypress={(e) => {
+                        if (!/[0-9]/.test(e.key)) e.preventDefault();
+                    }}
+                />
+                <label for="start">Starting Range</label>
+                <br />
+                <input
+                    type="number"
+                    name="end"
+                    id="end"
+                    class="number-input"
+                    placeholder="Ending Range"
+                    bind:value={endingRange}
+                    onkeypress={(e) => {
+                        if (!/[0-9]/.test(e.key)) e.preventDefault();
+                    }}
+                />
+                <label for="end">Ending Range</label>
+                <br />
+                <p class="subtext error-message" id="range-error"></p>
+            </div>
+
+            <br />
+
+            <div class="seed">
+                <input
+                    type="number"
+                    name="seed"
+                    id="seed"
+                    class="number-input"
+                    placeholder="Seed"
+                    bind:value={currentSeed}
+                    onkeypress={(e) => {
+                        if (!/[0-9]/.test(e.key)) e.preventDefault();
+                    }}
+                />
+                <label for="start">Seed</label>
+                <br />
+                <button
+                    class="random-seed-btn"
+                    onclick={() => {
+                        currentSeed = getRandInt32();
+                    }}>Random Seed</button
+                >
+                <br />
+                <p class="subtext error-message" id="seed-error"></p>
+            </div>
+
+            <div class="start-menu-buttons">
+                <button class="start-btn" onclick={runChecks}>Start</button>
+                <button class="load-btn">Load Save</button>
+            </div>
+            <br />
+            <p class="subtext">
+                {isSaveLoaded ? "(Save Loaded)" : "(No Save Loaded)"}
+            </p>
+        {/if}
     </div>
-
-    <br />
-
-    <div class="range">
-        <p class="subtext">
-            Keep both values as 0 for all AREDL levels to be included
-        </p>
-        <input
-            type="number"
-            name="start"
-            id="start"
-            class="number-input"
-            placeholder="Starting Range"
-            bind:value={startingRange}
-            onkeypress={(e) => {
-                if (!/[0-9]/.test(e.key)) e.preventDefault();
-            }}
-        />
-        <label for="start">Starting Range</label>
-        <br />
-        <input
-            type="number"
-            name="end"
-            id="end"
-            class="number-input"
-            placeholder="Ending Range"
-            bind:value={endingRange}
-            onkeypress={(e) => {
-                if (!/[0-9]/.test(e.key)) e.preventDefault();
-            }}
-        />
-        <label for="end">Ending Range</label>
-        <br />
-        <p class="subtext error-message" id="range-error"></p>
-    </div>
-
-    <br />
-
-    <div class="seed">
-        <input
-            type="number"
-            name="seed"
-            id="seed"
-            class="number-input"
-            placeholder="Seed"
-            bind:value={currentSeed}
-            onkeypress={(e) => {
-                if (!/[0-9]/.test(e.key)) e.preventDefault();
-            }}
-        />
-        <label for="start">Seed</label>
-        <br />
-        <button
-            class="random-seed-btn"
-            onclick={() => {
-                currentSeed = getRandInt32();
-            }}>Random Seed</button
-        >
-        <br />
-        <p class="subtext error-message" id="seed-error"></p>
-    </div>
-
-    <div class="start-menu-buttons">
-        <button class="start-btn" onclick={runChecks}>Start</button>
-        <button class="load-btn">Load Save</button>
-    </div>
-    <br />
-    <p class="subtext">{isSaveLoaded ? "(Save Loaded)" : "(No Save Loaded)"}</p>
-</div>
+{/if}
 
 <style>
     .start-menu {
