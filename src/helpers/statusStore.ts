@@ -13,10 +13,15 @@ export function startRun(save: SaveFile) {
     currentSaveFile.set(save);
     listCreationStatus.set("finished");
     rouletteStatus.set("started");
+    nextLevel(save.current_percentage, save.current)
 }
 
 export function resetRun() {
     currentSaveFile.set(null);
     listCreationStatus.set("idle");
     rouletteStatus.set("creating");
+}
+
+export function nextLevel(percentage: number, current: number) {
+
 }

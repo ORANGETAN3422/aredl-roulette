@@ -3,17 +3,18 @@
     import LevelCard from "./LevelCard.svelte";
 </script>
 
-{#if $currentSaveFile}
+<!-- {#if $currentSaveFile}
     <div class="levels-list">
         {#each $currentSaveFile.levels as level, index}
             <LevelCard
                 name={level.name}
                 position={level.position ?? index + 1}
                 min_percentage={index + 1}
+                level_id={level.level_id}
             />
         {/each}
     </div>
-{/if}
+{/if} -->
 
 <style>
     .levels-list {

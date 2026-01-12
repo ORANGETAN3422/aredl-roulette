@@ -1,9 +1,8 @@
-let levelEndpoint = "https://aredl-roulette.vercel.app/api/gdbrowser/";
-let aredlEndpoint = "https://api.aredl.net/v2"
+let aredlEndpoint = "https://aredl-roulette.vercel.app/api/aredl/level/"
 
 export async function fetchLevel(id: number) {
     try {
-        const response = await fetch(`${levelEndpoint}${id}`);
+        const response = await fetch(`${aredlEndpoint}${id}`);
         if (!response.ok) {
             throw new Error(`Response Status: ${response.status}`);
         }
