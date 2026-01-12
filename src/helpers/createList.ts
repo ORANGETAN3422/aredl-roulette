@@ -60,7 +60,7 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
         date: new Date().toISOString(),
         startRange: startRange,
         endRange: endRange,
-        current: 1,
+        current: 0,
         current_percentage: 1,
         levels: trimmedArray
     };

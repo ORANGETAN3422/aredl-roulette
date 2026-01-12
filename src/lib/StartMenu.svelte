@@ -168,11 +168,11 @@
         display: flex;
         flex-direction: column;
 
-        flex: 1 1 auto;
+        flex-grow: 0;
+        flex-shrink: 0;
         max-width: 600px;
         min-width: 320px;
-        min-height: 350px;
-        max-height: 480px;
+        height: 480px;
 
         background-color: #222;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);

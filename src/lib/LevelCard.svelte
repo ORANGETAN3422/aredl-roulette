@@ -2,6 +2,7 @@
     import { fetchLevel } from "../helpers/api";
 
     import { onMount } from "svelte";
+    import { nextLevel } from "../helpers/statusStore";
 
     export let name: string;
     export let position: number;
@@ -13,6 +14,7 @@
     let showcaseThumb: string = "https://placehold.co/600x400";
     let levelThumb: string | null = null;
     let creator: string = "unknown";
+    let completed = false;
     let userValue: number | null = null;
 
     function getYouTubeID(url: string): string | null {
@@ -40,7 +42,11 @@
         fetchLevelDetails();
     });
 
-    function handleDone() {}
+    function handleDone() {
+        if (userValue === null || userValue < min_percentage) return;
+        nextLevel(userValue + 1);
+        completed = true;
+    }
 
     function handleGiveUp() {}
 
@@ -69,28 +75,52 @@
             <img src={showcaseThumb} alt="thumbnail for yt" />
         </button>
         <div class="info">
-            <p class="title">#{position} - {name}</p>
+            <div class="title-row">
+                <a href={`https://aredl.net/list/${level_id}`} class="title"
+                    >#{position} - {name}</a
+                >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 448 512"
+                    class="title-icon"
+                    aria-hidden="true"
+                    onclick={() => {
+                        navigator.clipboard.writeText(level_id.toString());
+                    }}
+                >
+                    <path
+                        d="M192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-200.6c0-17.4-7.1-34.1-19.7-46.2L370.6 17.8C358.7 6.4 342.8 0 326.3 0L192 0zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-64 0 0 16-192 0 0-256 16 0 0-64-16 0z"
+                    />
+                </svg>
+            </div>
             <br />
             <p class="creator-title">by {creator}</p>
         </div>
-        <div class="right-side">
-            <input
-                type="number"
-                min="1"
-                max="99"
-                step="1"
-                value={userValue}
-                oninput={validateInput}
-                id="score-input"
-                placeholder={`At least ${min_percentage}%`}
-            />
-            <div class="buttons">
-                <button class="done-btn" onclick={handleDone}>Done</button>
-                <button class="giveup-btn" onclick={handleGiveUp}
-                    >Give Up</button
-                >
+        {#if !completed}
+            <div class="right-side">
+                <input
+                    type="number"
+                    min="1"
+                    max="99"
+                    step="1"
+                    value={userValue}
+                    oninput={validateInput}
+                    id="score-input"
+                    placeholder={`At least ${min_percentage}%`}
+                />
+                <div class="buttons">
+                    <button
+                        class="done-btn"
+                        onclick={handleDone}
+                        disabled={userValue === null ||
+                            userValue < min_percentage}>Done</button
+                    >
+                    <button class="giveup-btn" onclick={handleGiveUp}
+                        >Give Up</button
+                    >
+                </div>
             </div>
-        </div>
+        {/if}
     </div>
 </div>
 
@@ -166,10 +196,30 @@
         padding-left: 5px;
         line-height: 1.2;
         transition: text-decoration 0.2s ease-in-out;
+        cursor: pointer;
+        color: white;
     }
 
     .title:hover {
         text-decoration: underline;
+    }
+
+    .title-row {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .title-icon {
+        width: 1em;
+        height: 1em;
+        fill: currentColor;
+        opacity: 0.85;
+        cursor: pointer;
+    }
+
+    .title-icon:hover {
+        filter: brightness(0.5);
     }
 
     .creator-title {
@@ -178,6 +228,7 @@
         padding-left: 5px;
         line-height: 1.2;
         font-style: italic;
+        font-weight: 300;
     }
 
     .right-side {

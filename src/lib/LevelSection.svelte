@@ -1,20 +1,18 @@
 <script lang="ts">
-    import { currentSaveFile } from "../helpers/statusStore";
     import LevelCard from "./LevelCard.svelte";
+    import { levels } from "../helpers/statusStore";
 </script>
 
-<!-- {#if $currentSaveFile}
-    <div class="levels-list">
-        {#each $currentSaveFile.levels as level, index}
-            <LevelCard
-                name={level.name}
-                position={level.position ?? index + 1}
-                min_percentage={index + 1}
-                level_id={level.level_id}
-            />
-        {/each}
-    </div>
-{/if} -->
+<div class="levels-list">
+    {#each $levels as level, index}
+        <LevelCard
+            name={level.name}
+            position={level.position ?? index + 1}
+            min_percentage={level.min_percentage}
+            level_id={level.level_id}
+        />
+    {/each}
+</div>
 
 <style>
     .levels-list {
