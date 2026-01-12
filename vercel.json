@@ -1,8 +1,8 @@
 {
-    "routes": [
+    "rewrites": [
         {
-            "src": "^/$",
-            "status": 404
+            "source": "/",
+            "status": "/api"
         }
     ]
 }
