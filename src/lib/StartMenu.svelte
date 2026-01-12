@@ -2,12 +2,33 @@
     import { getRandInt32 } from "../helpers/rng";
     import { createNewRun } from "../helpers/createList";
     import { listCreationStatus, rouletteStatus } from "../helpers/statusStore";
+    import { decodeSave, encodeSave } from "../helpers/saving";
 
     let isSaveLoaded = false;
     let currentSeed = getRandInt32();
 
     let startingRange = 0;
     let endingRange = 0;
+
+    let fileInput: HTMLInputElement;
+
+    function openFilePicker() {
+        fileInput.click();
+    }
+
+    async function handleFile(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        if (!file) return;
+
+        if (!file.name.endsWith(".txt")) {
+            alert("Please select a .txt file");
+            return;
+        }
+
+        const text = await file.text();
+        console.log(decodeSave(text));
+    }
 
     function runChecks() {
         let rangeIsZero = startingRange === 0 && endingRange === 0;
@@ -121,7 +142,16 @@
 
             <div class="start-menu-buttons">
                 <button class="start-btn" onclick={runChecks}>Start</button>
-                <button class="load-btn">Load Save</button>
+                <button class="load-btn" onclick={openFilePicker}
+                    >Load Save</button
+                >
+                <input
+                    type="file"
+                    accept=".txt"
+                    bind:this={fileInput}
+                    onchange={handleFile}
+                    style="display: none"
+                />
             </div>
             <br />
             <p class="subtext">
@@ -182,9 +212,11 @@
 
     .start-btn {
         background-color: rgb(100, 180, 100);
+        margin-bottom: 4px;
     }
     .load-btn {
         background-color: rgb(100, 100, 180);
+        margin-bottom: 4px;
     }
     .random-seed-btn {
         background-color: rgb(100, 120, 160);

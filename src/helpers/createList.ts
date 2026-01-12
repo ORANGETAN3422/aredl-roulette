@@ -1,6 +1,6 @@
 import { currentSaveFile, listCreationStatus } from "./statusStore";
-import { encodeSave } from "./saving";
 import { createRNG } from "./rng";
+import { type SaveFile, type Level, encodeSave, decodeSave, downloadSave } from "./saving";
 
 let levelsEndpoint = "https://aredl-roulette.vercel.app/api/aredl/levels";
 
@@ -38,31 +38,23 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
     let selectedLevels: any[] = [];
     for (let i = 0; i < 100; i++) {
         let index = rngInt(rng) % levels.length;
-
         selectedLevels.push(levels[index]);
         levels.splice(index, 1);
     }
 
-    let trimmedArray: any[] = [];
+    let trimmedArray: Level[] = [];
     selectedLevels.forEach((level) => {
         trimmedArray.push({
             //id: level.id,
             name: level.name,
-            positions: level.position,
+            position: level.position,
             level_id: level.level_id,
         });
     });
 
     // -------------------------------------------->
     listCreationStatus.set("Creating Save...");
-    let saveFile: {
-        seed: number;
-        date: string;
-        startRange: number;
-        endRange: number;
-        current: number;
-        levels: any[]
-    } = {
+    let saveFile: SaveFile = {
         seed: seed,
         date: new Date().toISOString(),
         startRange: startRange,
@@ -72,10 +64,8 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
     };
     currentSaveFile.set(saveFile);
     listCreationStatus.set("Finished Creating Run");
-
-    console.log(structuredClone(saveFile));
-    console.log("hjelp");
-    encodeSave(saveFile);
+    //downloadSave(encodeSave(saveFile));
+    decodeSave(encodeSave(saveFile));
 }
 
 async function fetchLevels() {
@@ -90,4 +80,4 @@ async function fetchLevels() {
     } catch (error) {
         console.error((error as Error).message);
     }
-}  
+}
