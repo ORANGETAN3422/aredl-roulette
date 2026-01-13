@@ -67,6 +67,7 @@
             />
         </div>
     {/each}
+    <div class="ghost-scroll-element"></div>
 </div>
 
 <style>
@@ -77,7 +78,14 @@
         margin-top: 120px;
         width: 95vw;
         overflow-x: hidden;
+        overflow-y: scroll;
         padding-bottom: 2rem;
+    }
+
+    .ghost-scroll-element {
+        display: none;
+        height: 0;
+        width: 100px;
     }
 
     @media (max-width: 830px) {
@@ -89,6 +97,12 @@
     @media (max-width: 450px) {
         .levels-list {
             margin-top: 180px;
+        }
+        .ghost-scroll-element {
+            display: block;
+            width: 100px;
+            height: 120px;
+            flex-shrink: 0;
         }
     }
 </style>

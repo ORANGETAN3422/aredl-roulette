@@ -57,7 +57,7 @@
             <a href="https://matcool.github.io/extreme-demon-roulette/"
                 >Matcool's original Roulette</a
             >
-            <a href="https://github.com/ORANGETAN3422"
+            <a href="https://github.com/ORANGETAN3422/aredl-roulette"
                 >This Roulette's Repository</a
             >
         </div>

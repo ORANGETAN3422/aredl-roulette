@@ -336,7 +336,7 @@
         filter: brightness(1.2);
     }
 
-    @media (max-width: 450px) {
+    @media (max-width: 650px) {
         .level-card {
             width: 95%;
             height: auto; /* allow flexible height */
@@ -351,11 +351,33 @@
         }
 
         .level-thumb {
-            top: -15px;
-            right: -15px;
-            width: 200px;
-            height: 120px;
-            clip-path: polygon(45% 0, 100% 0, 100% 100%, 0% 100%);
+            all: unset;
+            bottom: -30%;
+            left: 0;
+            width: 100%;
+            height: 60%;
+
+            position: absolute;
+            z-index: 0;
+            overflow: hidden;
+            user-select: none;
+            pointer-events: none;
+            filter: blur(1px) brightness(0.7);
+
+            -webkit-mask-image: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 1) 30%,
+                rgba(0, 0, 0, 0) 100%
+            );
+            -webkit-mask-repeat: no-repeat;
+            -webkit-mask-size: 100% 100%;
+            mask-image: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.5) 30%,
+                rgba(0, 0, 0, 0) 100%
+            );
+            mask-repeat: no-repeat;
+            mask-size: 100% 100%;
         }
 
         .thumbnail {
@@ -392,7 +414,7 @@
 
         .percentage-text {
             font-size: 1.2rem;
-            margin-top: 0;
+            margin-top: -7px;
         }
 
         .creator-title {
