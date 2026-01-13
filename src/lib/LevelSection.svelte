@@ -59,12 +59,14 @@
 
 <style>
     .levels-list {
+        display: flex;
         flex-direction: column;
         gap: 0.5rem;
         margin-top: 120px;
         width: 95vw;
         height: calc(100vh - 120px);
-        overflow-y: scroll;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         overflow-x: hidden;
     }
 
@@ -72,6 +74,14 @@
         .levels-list {
             margin-top: 170px;
             height: calc(100vh - 170px);
+        }
+    }
+
+    @media (max-width: 450px) {
+        .levels-list {
+            margin-top: 180px;
+            height: calc(100vh - 180px);
+            padding-bottom: 1rem;
         }
     }
 </style>
