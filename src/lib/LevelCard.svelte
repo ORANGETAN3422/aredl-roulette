@@ -17,7 +17,8 @@
 
     let levelDetails: any = null;
     let showcaseLink: string;
-    let showcaseThumb: string = "https://placehold.co/600x400";
+    let showcaseThumb: string =
+        "https://placehold.co/1280x720?text=No+Thumbnail";
     let levelThumb: string | null = null;
     let creator: string = "unknown";
     let completed = false;
@@ -39,10 +40,28 @@
 
             const ytid = getYouTubeID(showcaseLink);
             if (!ytid) return null;
-            showcaseThumb = `https://img.youtube.com/vi/${ytid}/sddefault.jpg`;
+            showcaseThumb = await getYoutubeThumbnail(ytid);
 
             levelThumb = `https://raw.githubusercontent.com/All-Rated-Extreme-Demon-List/Thumbnails/main/levels/full/${level_id}.webp`;
         }
+    }
+
+    async function getYoutubeThumbnail(id: string): Promise<string> {
+        const links = [
+            `https://img.youtube.com/vi/${id}/maxresdefault.jpg`,
+            `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+            `https://img.youtube.com/vi/${id}/sddefault.jpg`,
+            `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
+        ];
+
+        for (const url of links) {
+            try {
+                const res = await fetch(url, { method: "HEAD" });
+                if (res.ok) return url;
+            } catch {}
+        }
+
+        return "https://placehold.co/1280x720?text=No+Thumbnail";
     }
 
     onMount(() => {
@@ -53,8 +72,8 @@
 
     function handleDone() {
         if (userValue === null || userValue < min_percentage) return;
-        nextLevel(userValue + 1);
         saveLevelPercentage(userValue, name);
+        nextLevel(userValue + 1);
         completedPercentageLocal = userValue;
         completed = true;
     }
@@ -192,14 +211,17 @@
         border-radius: 3px;
         margin-right: 1rem;
         flex-shrink: 0;
+        overflow: hidden;
+        background-color: #222;
     }
 
     .thumbnail img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transform: scale(1.1);
+        transform-origin: center;
         border-radius: 3px;
-        scale: 1.1;
     }
 
     .info {

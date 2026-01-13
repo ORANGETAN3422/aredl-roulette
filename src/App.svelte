@@ -1,9 +1,18 @@
 <script lang="ts">
     import StartMenu from "./lib/StartMenu.svelte";
     import LevelSection from "./lib/LevelSection.svelte";
-    import { downloadSave, encodeSave } from "./helpers/saving";
+    import {
+        downloadSave,
+        encodeSave,
+        loadSaveFromBrowser,
+    } from "./helpers/saving";
     import { currentSaveFile } from "./helpers/statusStore";
     import { resetRun } from "./helpers/progress";
+    import { onMount } from "svelte";
+
+    onMount(() => {
+        loadSaveFromBrowser();
+    });
 
     function downloadCurrentSave() {
         if ($currentSaveFile) {

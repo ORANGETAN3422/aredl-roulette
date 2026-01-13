@@ -43,8 +43,7 @@
                 min_percentage={level.min_percentage}
                 level_id={level.level_id}
                 completedOnStart={level.completed}
-                completedPercentage={$currentSaveFile?.levels[index]
-                    .completed_percentage ?? 0}
+                completedPercentage={level.completed_percentage}
             />
         </div>
     {/each}

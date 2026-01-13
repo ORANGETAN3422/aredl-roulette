@@ -1,5 +1,5 @@
 import { currentSaveFile, listCreationStatus, rouletteStatus } from "./statusStore";
-import { type SaveFile } from "./saving";
+import { saveToBrowser, type SaveFile } from "./saving";
 import { get, writable } from "svelte/store";
 
 type LevelData = {
@@ -14,11 +14,12 @@ type LevelData = {
 export const levels = writable<LevelData[]>([]);
 
 export function startRun(save: SaveFile) {
+    resetRun();
     currentSaveFile.set(save);
     listCreationStatus.set("finished");
     rouletteStatus.set("started");
+    saveToBrowser(save);
 
-    console.log(save);
     // create dummy cards for saves with progress. Do this for every card except for the current
     for (let i = 0; i < save.current - 1; i++) {
         createDummyCard(save, i);
@@ -55,6 +56,7 @@ export function nextLevel(newPercentage: number, completed: boolean = false) {
         completed_percentage: newSave.levels[newSave.current - 1].completed_percentage,
     }
     currentSaveFile.set(newSave);
+    saveToBrowser(structuredClone(newSave));
     addLevel(level);
 }
 
@@ -91,7 +93,6 @@ export function addLevel(level: LevelData) {
 export function resetLevels() {
     levels.set([]);
 }
-
 
 export function endGame() {
     rouletteStatus.set("completed");

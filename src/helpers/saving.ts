@@ -1,3 +1,5 @@
+import { startRun } from "./progress";
+
 export interface SaveFile {
     seed: number;
     date: string;
@@ -13,6 +15,19 @@ export interface Level {
     position: number;
     level_id: number;
     completed_percentage: number;
+}
+
+export function saveToBrowser(save: SaveFile) {
+    let stringFile = encodeSave(save);
+    localStorage.setItem("aredl-roulette-save", stringFile);
+}
+
+export function loadSaveFromBrowser() {
+    let save = localStorage.getItem("aredl-roulette-save");
+    if (save) {
+        let DecodedSave: SaveFile = decodeSave(save);
+        startRun(DecodedSave);
+    }
 }
 
 export function downloadSave(save: string) {
