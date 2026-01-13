@@ -48,7 +48,7 @@
 
     async function getYoutubeThumbnail(id: string): Promise<string> {
         const links = [
-            `https://img.youtube.com/vi/${id}/maxresdefault.jpg`,
+            //`https://img.youtube.com/vi/${id}/maxresdefault.jpg`, // this one takes too long
             `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
             `https://img.youtube.com/vi/${id}/sddefault.jpg`,
             `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
