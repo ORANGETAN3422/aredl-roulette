@@ -2,7 +2,7 @@
     import { fetchLevel } from "../helpers/api";
 
     import { onMount } from "svelte";
-    import { nextLevel } from "../helpers/statusStore";
+    import { endGame, nextLevel } from "../helpers/statusStore";
 
     export let name: string;
     export let position: number;
@@ -48,7 +48,10 @@
         completed = true;
     }
 
-    function handleGiveUp() {}
+    function handleGiveUp() {
+        endGame();
+        completed = true;
+    }
 
     function validateInput(event: Event) {
         const value = parseInt((event.target as HTMLInputElement).value);

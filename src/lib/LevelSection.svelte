@@ -1,17 +1,26 @@
 <script lang="ts">
     import LevelCard from "./LevelCard.svelte";
-    import { levels } from "../helpers/statusStore";
+    import FinishCard from "./FinishCard.svelte";
+    import { levels, rouletteStatus } from "../helpers/statusStore";
+    import { fly } from "svelte/transition";
 </script>
 
 <div class="levels-list">
     {#each $levels as level, index}
-        <LevelCard
-            name={level.name}
-            position={level.position ?? index + 1}
-            min_percentage={level.min_percentage}
-            level_id={level.level_id}
-        />
+        <div in:fly={{ y: 16, opacity: 0, duration: 250 }}>
+            <LevelCard
+                name={level.name}
+                position={level.position ?? index + 1}
+                min_percentage={level.min_percentage}
+                level_id={level.level_id}
+            />
+        </div>
     {/each}
+    {#if $rouletteStatus === "completed"}
+        <div in:fly={{ y: 16, opacity: 0, duration: 300 }}>
+            <FinishCard />
+        </div>
+    {/if}
 </div>
 
 <style>

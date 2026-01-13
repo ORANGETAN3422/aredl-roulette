@@ -32,6 +32,12 @@ export function nextLevel(newPercentage: number) {
     // if you get a percentage greater than 1 then it will go to the next in queue
     let newSave = get(currentSaveFile)
     if (newSave) {
+        if (newPercentage === 101) {
+            newSave.current_percentage = newPercentage;
+            endGame();
+            return;
+        }
+
         newSave.current = (newSave.current ?? 0) + 1;
         newSave.current_percentage = newPercentage;
 
@@ -41,10 +47,16 @@ export function nextLevel(newPercentage: number) {
             min_percentage: newPercentage,
             level_id: newSave.levels[newSave.current - 1].level_id
         }
+        currentSaveFile.set(newSave);
         addLevel(level);
     }
 
+
     console.log(newSave);
+}
+
+export function endGame() {
+    rouletteStatus.set("completed");
 }
 
 export function addLevel(level: LevelData) {
