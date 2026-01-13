@@ -333,4 +333,92 @@
     .giveup-btn:hover {
         filter: brightness(1.2);
     }
+
+    @media (max-width: 450px) {
+        .level-card {
+            width: 95%;
+            height: auto; /* allow flexible height */
+            margin-left: 2.5%;
+            margin-bottom: 1rem;
+        }
+
+        .inner {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0.5rem;
+        }
+
+        .level-thumb {
+            top: -15px;
+            right: -15px;
+            width: 200px;
+            height: 120px;
+            clip-path: polygon(45% 0, 100% 0, 100% 100%, 0% 100%);
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: auto;
+            margin-right: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            transform: scale(1.1);
+            border-radius: 3px;
+        }
+
+        .info {
+            margin-top: 0;
+            width: 100%;
+        }
+
+        .title {
+            font-size: 1.3rem;
+            padding-left: 0;
+        }
+
+        .title-row {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            align-items: center;
+        }
+
+        .percentage-text {
+            font-size: 1.2rem;
+            margin-top: 0;
+        }
+
+        .creator-title {
+            font-size: 0.9rem;
+            padding-left: 0;
+        }
+
+        .right-side {
+            width: 100%;
+            margin-left: 0;
+            margin-top: 0.5rem;
+        }
+
+        .right-side input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .done-btn,
+        .giveup-btn {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+    }
 </style>

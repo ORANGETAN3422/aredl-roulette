@@ -171,4 +171,65 @@
             top: 5em;
         }
     }
+
+    @media (max-width: 450px) {
+        .outline-thing {
+            height: auto; /* let it expand with content */
+            padding: 1rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            margin: 0.5rem 0;
+        }
+
+        .right-menu,
+        .left-menu {
+            position: relative;
+            top: auto;
+            left: auto;
+            right: auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1rem;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.5rem;
+            text-align: center;
+        }
+
+        .right-menu .top-content {
+            margin-bottom: 0;
+            font-size: 0.8rem;
+        }
+
+        .bottom-buttons {
+            flex-direction: row;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .restart-btn,
+        .download-save-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .left-menu a {
+            font-size: 0.8rem;
+            display: inline-block;
+            margin: 0 0.2rem;
+        }
+
+        .wrapper {
+            align-items: center;
+            overflow-y: auto;
+            padding-top: 1rem;
+        }
+    }
 </style>
