@@ -2,12 +2,18 @@
     import { fetchLevel } from "../helpers/api";
 
     import { onMount } from "svelte";
-    import { endGame, nextLevel } from "../helpers/statusStore";
+    import {
+        endGame,
+        nextLevel,
+        saveLevelPercentage,
+    } from "../helpers/progress";
 
     export let name: string;
     export let position: number;
     export let min_percentage: number;
     export let level_id: number;
+    export let completedOnStart: boolean;
+    export let completedPercentage: number;
 
     let levelDetails: any = null;
     let showcaseLink: string;
@@ -15,6 +21,7 @@
     let levelThumb: string | null = null;
     let creator: string = "unknown";
     let completed = false;
+    let completedPercentageLocal = 0;
     let userValue: number | null = null;
 
     function getYouTubeID(url: string): string | null {
@@ -39,12 +46,16 @@
     }
 
     onMount(() => {
+        completed = completedOnStart;
+        completedPercentageLocal = completedPercentage;
         fetchLevelDetails();
     });
 
     function handleDone() {
         if (userValue === null || userValue < min_percentage) return;
         nextLevel(userValue + 1);
+        saveLevelPercentage(userValue, name);
+        completedPercentageLocal = userValue;
         completed = true;
     }
 
@@ -79,22 +90,28 @@
         </button>
         <div class="info">
             <div class="title-row">
-                <a href={`https://aredl.net/list/${level_id}`} class="title"
-                    >#{position} - {name}</a
+                <a
+                    href={`https://aredl.net/list/${level_id}`}
+                    target="_blank"
+                    class="title">#{position} - {name}</a
                 >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 448 512"
-                    class="title-icon"
-                    aria-hidden="true"
-                    onclick={() => {
-                        navigator.clipboard.writeText(level_id.toString());
-                    }}
-                >
-                    <path
-                        d="M192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-200.6c0-17.4-7.1-34.1-19.7-46.2L370.6 17.8C358.7 6.4 342.8 0 326.3 0L192 0zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-64 0 0 16-192 0 0-256 16 0 0-64-16 0z"
-                    />
-                </svg>
+                {#if completed}
+                    <p class="percentage-text">{completedPercentageLocal}%</p>
+                {:else}
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 448 512"
+                        class="title-icon"
+                        aria-hidden="true"
+                        onclick={() => {
+                            navigator.clipboard.writeText(level_id.toString());
+                        }}
+                    >
+                        <path
+                            d="M192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-200.6c0-17.4-7.1-34.1-19.7-46.2L370.6 17.8C358.7 6.4 342.8 0 326.3 0L192 0zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-64 0 0 16-192 0 0-256 16 0 0-64-16 0z"
+                        />
+                    </svg>
+                {/if}
             </div>
             <br />
             <p class="creator-title">by {creator}</p>
@@ -214,6 +231,17 @@
     }
 
     .title-icon {
+        width: 1em;
+        height: 1em;
+        fill: currentColor;
+        opacity: 0.85;
+        cursor: pointer;
+    }
+
+    .percentage-text {
+        font-size: 1.4rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-top: -8px;
         width: 1em;
         height: 1em;
         fill: currentColor;

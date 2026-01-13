@@ -12,6 +12,7 @@ export interface Level {
     name: string;
     position: number;
     level_id: number;
+    completed_percentage: number;
 }
 
 export function downloadSave(save: string) {
@@ -30,7 +31,7 @@ export function encodeSave(save: any) {
     let s = structuredClone(save);
     let levelsTrimmed: any[] = [];
     s.levels.forEach((level: Level) => {
-        levelsTrimmed.push([btoa(level.name), (level.position).toString(36), (level.level_id).toString(36)]);
+        levelsTrimmed.push([btoa(level.name), (level.position).toString(36), (level.level_id).toString(36), (level.completed_percentage).toString(36)]);
     });
 
     s.levels = levelsTrimmed;
@@ -73,8 +74,8 @@ export function decodeSave(save: string) {
     parsedSave.date = new Date(parseInt(parsedSave.date, 36)).toISOString();
 
     let levelsExpanded: any[] = [];
-    parsedSave.levels.forEach((level: [string, string, string]) => {
-        levelsExpanded.push({ name: atob(level[0]), position: parseInt(level[1], 36), level_id: parseInt(level[2], 36) });
+    parsedSave.levels.forEach((level: [string, string, string, string]) => {
+        levelsExpanded.push({ name: atob(level[0]), position: parseInt(level[1], 36), level_id: parseInt(level[2], 36), completed_percentage: parseInt(level[3], 36) });
     });
 
     parsedSave.levels = levelsExpanded;

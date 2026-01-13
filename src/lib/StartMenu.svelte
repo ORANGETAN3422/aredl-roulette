@@ -1,11 +1,8 @@
 <script lang="ts">
     import { getRandInt32 } from "../helpers/rng";
     import { createNewRun } from "../helpers/createList";
-    import {
-        listCreationStatus,
-        rouletteStatus,
-        startRun,
-    } from "../helpers/statusStore";
+    import { listCreationStatus, rouletteStatus } from "../helpers/statusStore";
+    import { startRun } from "../helpers/progress";
     import { decodeSave } from "../helpers/saving";
     import { fly } from "svelte/transition";
 
@@ -64,6 +61,10 @@
             includeDuo,
         );
     }
+
+    listCreationStatus.subscribe((value) => {
+        if (value === "idle") currentSeed = getRandInt32();
+    });
 </script>
 
 {#if $rouletteStatus === "creating"}

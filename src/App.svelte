@@ -2,7 +2,8 @@
     import StartMenu from "./lib/StartMenu.svelte";
     import LevelSection from "./lib/LevelSection.svelte";
     import { downloadSave, encodeSave } from "./helpers/saving";
-    import { currentSaveFile, resetRun } from "./helpers/statusStore";
+    import { currentSaveFile } from "./helpers/statusStore";
+    import { resetRun } from "./helpers/progress";
 
     function downloadCurrentSave() {
         if ($currentSaveFile) {

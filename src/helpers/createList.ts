@@ -1,14 +1,16 @@
 import { currentSaveFile, listCreationStatus } from "./statusStore";
 import { createRNG } from "./rng";
 import { type SaveFile, type Level } from "./saving";
-import { startRun } from "./statusStore";
+import { startRun } from "./progress";
 
 let levelsEndpoint = "https://aredl-roulette.vercel.app/api/aredl/levels";
+let storedLevels: any;
 
 export async function createNewRun(seed: number, startRange: number, endRange: number, includeLegacy: boolean, includeDuo: boolean) {
     listCreationStatus.set("Fethching Levels from AREDL...");
 
-    let levels = await fetchLevels();
+    if (!storedLevels) storedLevels = await fetchLevels();
+    let levels = structuredClone(storedLevels);
     if (!levels) {
         listCreationStatus.set("error");
         console.log("Failed to fetch levels.");
@@ -50,6 +52,7 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
             name: level.name,
             position: level.position,
             level_id: level.level_id,
+            completed_percentage: 0,
         });
     });
 
@@ -60,7 +63,7 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
         date: new Date().toISOString(),
         startRange: startRange,
         endRange: endRange,
-        current: 0,
+        current: 1,
         current_percentage: 1,
         levels: trimmedArray
     };
