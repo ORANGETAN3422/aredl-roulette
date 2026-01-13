@@ -53,14 +53,13 @@
         </div>
 
         <div class="left-menu">
-            <a href="https://aredl.net/">AREDL Homepage</a> <br />
+            <a href="https://aredl.net/">AREDL Homepage</a>
             <a href="https://matcool.github.io/extreme-demon-roulette/"
                 >Matcool's original Roulette</a
-            > <br />
+            >
             <a href="https://github.com/ORANGETAN3422"
                 >This Roulette's Repository</a
-            > <br />
-            <br />
+            >
         </div>
     </div>
 
@@ -102,12 +101,13 @@
         left: 20px;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        width: max-content;
         align-items: flex-start;
+        gap: 0.3rem;
+        width: max-content;
         text-align: left;
         font-style: italic;
         text-decoration: underline;
+        height: auto;
     }
 
     .top-content {

@@ -80,6 +80,8 @@
 
     function handleGiveUp() {
         endGame();
+        saveLevelPercentage(min_percentage, name);
+        completedPercentageLocal = min_percentage;
         completed = true;
     }
 

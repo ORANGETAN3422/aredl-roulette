@@ -157,7 +157,6 @@
                         style="display: none"
                     />
                 </div>
-                <br />
                 <p class="subtext">
                     {isSaveLoaded ? "(Save Loaded)" : "(No Save Loaded)"}
                 </p>
@@ -176,13 +175,15 @@
         flex-shrink: 0;
         max-width: 600px;
         min-width: 320px;
-        height: 480px;
+        padding: 1.5em;
 
         background-color: #222;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         border-radius: 10px;
 
-        padding: 1.5em;
+        height: auto;
+        max-height: calc(100vh - 140px);
+        overflow-y: auto;
     }
 
     h2 {

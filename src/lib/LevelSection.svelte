@@ -2,7 +2,7 @@
     import LevelCard from "./LevelCard.svelte";
     import FinishCard from "./FinishCard.svelte";
     import { currentSaveFile, rouletteStatus } from "../helpers/statusStore";
-    import { levels } from "../helpers/progress";
+    import { levels, remainingLevels } from "../helpers/progress";
     import { fly } from "svelte/transition";
     import { tick } from "svelte";
 
@@ -55,6 +55,18 @@
             <FinishCard />
         </div>
     {/if}
+    {#each $remainingLevels as level, index}
+        <div in:fly={{ y: 16, opacity: 0, duration: 250 }}>
+            <LevelCard
+                name={level.name}
+                position={level.position ?? index + 1}
+                min_percentage={level.min_percentage}
+                level_id={level.level_id}
+                completedOnStart={level.completed}
+                completedPercentage={level.completed_percentage}
+            />
+        </div>
+    {/each}
 </div>
 
 <style>
@@ -64,24 +76,19 @@
         gap: 0.5rem;
         margin-top: 120px;
         width: 95vw;
-        height: calc(100vh - 120px);
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
         overflow-x: hidden;
+        padding-bottom: 2rem;
     }
 
     @media (max-width: 830px) {
         .levels-list {
             margin-top: 170px;
-            height: calc(100vh - 170px);
         }
     }
 
     @media (max-width: 450px) {
         .levels-list {
             margin-top: 180px;
-            height: calc(100vh - 180px);
-            padding-bottom: 1rem;
         }
     }
 </style>

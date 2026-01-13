@@ -12,6 +12,7 @@ type LevelData = {
 };
 
 export const levels = writable<LevelData[]>([]);
+export const remainingLevels = writable<LevelData[]>([]);
 
 export function startRun(save: SaveFile) {
     resetRun();
@@ -39,6 +40,7 @@ export function nextLevel(newPercentage: number, completed: boolean = false) {
 
     if (newPercentage === 101) {
         newSave.current_percentage = newPercentage;
+        saveToBrowser(structuredClone(newSave));
         endGame();
         return;
     }
@@ -73,7 +75,7 @@ export function createActiveCard(save: SaveFile, index: number, percentage: numb
     addLevel(level);
 }
 
-export function createDummyCard(save: SaveFile, index: number) {
+export function createDummyCard(save: SaveFile, index: number, isRemainingLevel: boolean = false) {
     let saveInfo = structuredClone(save.levels[index]);
     let level: LevelData = {
         name: saveInfo.name,
@@ -83,14 +85,27 @@ export function createDummyCard(save: SaveFile, index: number) {
         completed: true, // again, this is a dummy so this should be true because there is no interaction
         completed_percentage: saveInfo.completed_percentage
     }
-    addLevel(level);
+    addLevel(level, isRemainingLevel);
 }
 
-export function addLevel(level: LevelData) {
-    levels.update(l => [...l, level]);
+export function showRemainingLevels(save: SaveFile) {
+    let newSave = structuredClone(save);
+    let savedFile = get(currentSaveFile);
+    if (!savedFile) return;
+
+    for (let i = newSave.current_percentage; i < 100; i++) {
+        saveLevelPercentage(i + 1, newSave.levels[newSave.current + (i - newSave.current_percentage)].name);
+        createDummyCard(structuredClone(savedFile), newSave.current + (i - newSave.current_percentage), true);
+    }
+}
+
+export function addLevel(level: LevelData, isRemainingLevel: boolean = false) {
+    if (isRemainingLevel) remainingLevels.update(l => [...l, level]);
+    else levels.update(l => [...l, level]);
 }
 
 export function resetLevels() {
+    remainingLevels.set([]);
     levels.set([]);
 }
 
