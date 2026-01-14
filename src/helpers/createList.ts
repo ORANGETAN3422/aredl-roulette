@@ -26,6 +26,8 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
         !level.tags.some((tag: string) => extra.blockedTags.includes(tag))
     );
 
+    levels = levels.filter((level: any) => (level.edel_enjoyment > extra.minimumEnjoyment));
+
     if (startRange === 0 && endRange === 0) {
         startRange = 1;
         endRange = levels.length + 1;
@@ -73,8 +75,6 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
         selectedLevels.push(chosen);
         levels.splice(levels.indexOf(chosen), 1);
     }
-
-    console.log(extra);
 
     let trimmedArray: Level[] = [];
     selectedLevels.forEach((level) => {

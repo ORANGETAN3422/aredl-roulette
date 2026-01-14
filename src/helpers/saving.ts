@@ -23,6 +23,7 @@ export interface ExtraDetails {
     extendedListBlock: number;
     mainListCap: number;
     extendedListCap: number;
+    minimumEnjoyment: number;
     blockedTags: string[];
 }
 
