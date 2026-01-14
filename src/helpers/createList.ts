@@ -22,11 +22,18 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
     if (!includeLegacy) { levels = levels.filter((level: any) => (!level.legacy)); }
     if (!includeDuo) { levels = levels.filter((level: any) => (!level.two_player)); }
 
-    levels = levels.filter((level: any) =>
-        !level.tags.some((tag: string) => extra.blockedTags.includes(tag))
-    );
+    levels = levels.filter((level: any) => {
+        const hasIncluded = level.tags.some((tag: string) => extra.includedTags.includes(tag));
+        const hasBlocked = level.tags.some((tag: string) => extra.blockedTags.includes(tag));
+
+        if (hasIncluded && extra.prioritiseIncluded) return true;
+        if (hasBlocked) return false;
+        return true;
+    });
+    console.log(levels)
 
     levels = levels.filter((level: any) => (level.edel_enjoyment > extra.minimumEnjoyment));
+    levels = levels.filter((level: any) => (level.edel_enjoyment < extra.maximumEnjoyment));
 
     if (startRange === 0 && endRange === 0) {
         startRange = 1;

@@ -13,7 +13,7 @@
     import DownArrowPng from "/down-arrow.png";
 
     let isSaveLoaded: boolean = false;
-    let advancedOptionsCollapsed: boolean = false;
+    let advancedOptionsCollapsed: boolean = true;
     let currentSeed: number = getRandInt32();
 
     let startingRange: number = 0;
@@ -23,10 +23,14 @@
     let extendedListBlock: number = 100;
     let mainListCap: number = 100;
     let extendedListCap: number = 100;
-    let blockedTags: string[] = [];
     let minumimEnjoyment: number = 0;
+    let maximumEnjoyment: number = 100;
+    let prioritiseIncluded: boolean = false;
 
     let fileInput: HTMLInputElement;
+
+    let tagStates: Record<string, "none" | "included" | "blocked"> = {};
+    resetTags();
 
     function openFilePicker() {
         fileInput.click();
@@ -47,11 +51,17 @@
     }
 
     function tagButtonClick(tag: string) {
-        if (blockedTags.includes(tag)) {
-            blockedTags = blockedTags.filter((t) => t !== tag);
-        } else {
-            blockedTags = [...blockedTags, tag];
-        }
+        const current = tagStates[tag] || "none";
+
+        if (current === "none") tagStates[tag] = "blocked";
+        else if (current === "blocked") tagStates[tag] = "included";
+        else if (current === "included") tagStates[tag] = "none";
+    }
+
+    function resetTags() {
+        aredlTags.forEach((tag) => {
+            tagStates[tag] = "none";
+        });
     }
 
     function fuckCss(tag: string): string {
@@ -65,16 +75,32 @@
     }
 
     function runChecks() {
+        let hasError: boolean = false;
         let rangeIsZero = startingRange === 0 && endingRange === 0;
+
+        const rangeErrorEl = document.getElementById("range-error")!;
+        const seedErrorEl = document.getElementById("seed-error")!;
+        const edelErrorEl = document.getElementById("edel-error")!;
+
+        rangeErrorEl.textContent = "";
+        seedErrorEl.textContent = "";
+        edelErrorEl.textContent = "";
+
         if (startingRange < 0 || endingRange < 0) {
-            document.getElementById("range-error")!.textContent =
-                "Ranges must be non-negative.";
-            return;
+            rangeErrorEl.textContent = "Ranges must be non-negative.";
+            rangeErrorEl.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+            hasError = true;
         }
         if (!rangeIsZero && endingRange - startingRange < 100) {
-            document.getElementById("range-error")!.textContent =
-                "Range must be at least 100.";
-            return;
+            rangeErrorEl.textContent = "Range must be at least 100.";
+            rangeErrorEl.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+            hasError = true;
         }
 
         let includeLegacy = (
@@ -83,16 +109,32 @@
         let includeDuo = (document.getElementById("duo") as HTMLInputElement)
             .checked;
 
-        document.getElementById("range-error")!.textContent = "";
-        document.getElementById("seed-error")!.textContent = "";
+        if (minumimEnjoyment > maximumEnjoyment) {
+            edelErrorEl.textContent =
+                "Minimum enjoyment cannot be greater than maximum enjoyment";
+            edelErrorEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            hasError = true;
+        }
+        if (hasError) return;
+
+        rangeErrorEl.textContent = "";
+        seedErrorEl.textContent = "";
+        edelErrorEl.textContent = "";
 
         let extraDetails: ExtraDetails = {
-            mainListBlock: mainListBlock,
-            extendedListBlock: extendedListBlock,
-            mainListCap: mainListCap,
-            extendedListCap: extendedListCap,
-            blockedTags: blockedTags,
+            mainListBlock,
+            extendedListBlock,
+            mainListCap,
+            extendedListCap,
+            blockedTags: Object.keys(tagStates).filter(
+                (t) => tagStates[t] === "blocked",
+            ),
+            includedTags: Object.keys(tagStates).filter(
+                (t) => tagStates[t] === "included",
+            ),
             minimumEnjoyment: minumimEnjoyment,
+            maximumEnjoyment: maximumEnjoyment,
+            prioritiseIncluded: prioritiseIncluded,
         };
 
         createNewRun(
@@ -209,6 +251,18 @@
                     <div class={advancedOptionsCollapsed ? "collapsed" : ""}>
                         <hr />
                         <div class="advanced-options-con">
+                            <p>Maximum EDEL Enjoyment:</p>
+                            <input
+                                type="number"
+                                name="enjoyment"
+                                id="enjoyment"
+                                class="number-input"
+                                placeholder="100"
+                                bind:value={maximumEnjoyment}
+                            />
+                        </div>
+                        <p class="subtext">leave as 100 for default settings</p>
+                        <div class="advanced-options-con">
                             <p>Minimum EDEL Enjoyment:</p>
                             <input
                                 type="number"
@@ -220,6 +274,7 @@
                             />
                         </div>
                         <p class="subtext">leave as 0 for default settings</p>
+                        <p class="subtext error-message" id="edel-error"></p>
                         <hr />
                         <div class="advanced-options-con">
                             <p>No Main Lists Past:</p>
@@ -298,24 +353,39 @@
                         </p>
                         <hr />
                         <div class="tag-options-con">
+                            <div class="advanced-options-con">
+                                <label for="priority-switch"
+                                    >Prioritise Included Tags:</label
+                                >
+                                <input
+                                    type="checkbox"
+                                    class="priority-check"
+                                    id="priority-switch"
+                                    bind:checked={prioritiseIncluded}
+                                />
+                            </div>
+                            <p class="subtext">
+                                (Blocked tags are prioritised by default)
+                            </p>
                             <p>Blocked Tags</p>
                             <p class="subtext">
-                                (click on a tag to block all levels with that
-                                tag)
+                                (click on a tag to cycle between ignored,
+                                blocked or included)
                             </p>
                             {#each aredlTags as tag}
                                 <button
-                                    value={tag}
                                     class={"tag-button " +
                                         fuckCss(tag) +
-                                        (blockedTags.includes(tag)
-                                            ? " blocked"
-                                            : "")}
+                                        " " +
+                                        tagStates[tag]}
                                     onclick={() => tagButtonClick(tag)}
                                 >
                                     {tag}
                                 </button>
                             {/each}
+                            <button class="reset-tags-btn" onclick={resetTags}
+                                >Reset All Tags</button
+                            >
                         </div>
                     </div>
                 </div>
@@ -420,7 +490,8 @@
         background-color: rgb(100, 100, 180);
         margin-bottom: 4px;
     }
-    .random-seed-btn {
+    .random-seed-btn,
+    .reset-tags-btn {
         background-color: rgb(100, 120, 160);
         scale: 0.8;
     }
@@ -448,9 +519,19 @@
         filter: brightness(1.2);
         transform: scale(1);
     }
+    .tag-button.none {
+        text-decoration: none;
+        border: 1px #333 solid;
+    }
+
+    .tag-button.included {
+        background-color: rgb(100, 180, 100);
+        text-decoration: none;
+    }
+
     .tag-button.blocked {
-        background-color: rgb(180, 100, 100);
-        transform: scale(0.97);
+        background-color: rgb(180, 80, 80);
+        text-decoration: line-through;
     }
 
     .collapse-arrow {
@@ -466,6 +547,10 @@
 
     .error-message {
         color: red;
+    }
+
+    .priority-check {
+        margin-left: 5px;
     }
 
     hr {

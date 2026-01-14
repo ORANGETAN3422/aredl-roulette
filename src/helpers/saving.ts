@@ -24,7 +24,10 @@ export interface ExtraDetails {
     mainListCap: number;
     extendedListCap: number;
     minimumEnjoyment: number;
+    maximumEnjoyment: number;
     blockedTags: string[];
+    includedTags: string[];
+    prioritiseIncluded: boolean;
 }
 
 export let aredlTags: string[] = [
