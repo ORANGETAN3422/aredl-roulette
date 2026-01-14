@@ -131,7 +131,6 @@ export function encodeSave(save: any) {
     string = string.replace("levels", "&");
     string = string.replace("current_percentage", "*")
 
-    console.log(string);
     return string;
 }
 
@@ -162,6 +161,5 @@ export function decodeSave(save: string) {
     });
 
     parsedSave.levels = levelsExpanded;
-    console.log(parsedSave);
     return parsedSave;
 }

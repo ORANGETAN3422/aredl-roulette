@@ -30,7 +30,6 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
         if (hasBlocked) return false;
         return true;
     });
-    console.log(levels)
 
     levels = levels.filter((level: any) => (level.edel_enjoyment > extra.minimumEnjoyment));
     levels = levels.filter((level: any) => (level.edel_enjoyment < extra.maximumEnjoyment));
