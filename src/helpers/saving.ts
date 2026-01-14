@@ -30,6 +30,14 @@ export interface ExtraDetails {
     prioritiseIncluded: boolean;
 }
 
+export interface GenerationDetails {
+    LevelsGetEasier: boolean;
+    LevelsGetHarder: boolean;
+    BellCurveDifficulty: boolean;
+    LastLevelMinPosition: number;
+    LastLevelMaxPosition: number;
+}
+
 export let aredlTags: string[] = [
     "1.6",
     "1.6PS",
@@ -115,10 +123,7 @@ export function encodeSave(save: any) {
     s.endRange = (s.endRange).toString(36);
     s.current = (s.current).toString(36);
     s.date = (Date.parse(s.date)).toString(36);
-    if (s.extra) {
-        s.extra = btoa(JSON.stringify(s.extra));
-    }
-
+    if (s.extra) s.extra = btoa(JSON.stringify(s.extra));
 
     let string = JSON.stringify(s);
     string = string.replaceAll('"],["', '+');
@@ -151,9 +156,7 @@ export function decodeSave(save: string) {
     parsedSave.endRange = parseInt(parsedSave.endRange, 36);
     parsedSave.current = parseInt(parsedSave.current, 36);
     parsedSave.date = new Date(parseInt(parsedSave.date, 36)).toISOString();
-    if (parsedSave.extra) {
-        parsedSave.extra = JSON.parse(atob(parsedSave.extra));
-    }
+    if (parsedSave.extra) parsedSave.extra = JSON.parse(atob(parsedSave.extra));
 
     let levelsExpanded: any[] = [];
     parsedSave.levels.forEach((level: [string, string, string, string]) => {

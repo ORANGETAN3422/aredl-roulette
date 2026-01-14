@@ -3,17 +3,13 @@
     import { createNewRun } from "../helpers/createList";
     import { listCreationStatus, rouletteStatus } from "../helpers/statusStore";
     import { startRun } from "../helpers/progress";
-    import {
-        aredlTags,
-        decodeSave,
-        type ExtraDetails,
-    } from "../helpers/saving";
+    import { decodeSave, type ExtraDetails } from "../helpers/saving";
     import { fly } from "svelte/transition";
 
-    import DownArrowPng from "/down-arrow.png";
+    import AdvancedOptions from "./StartMenuSections/AdvancedOptions.svelte";
+    import RngOptions from "./StartMenuSections/GenerationOptions.svelte";
 
     let isSaveLoaded: boolean = false;
-    let advancedOptionsCollapsed: boolean = true;
     let currentSeed: number = getRandInt32();
 
     let startingRange: number = 0;
@@ -23,14 +19,13 @@
     let extendedListBlock: number = 100;
     let mainListCap: number = 100;
     let extendedListCap: number = 100;
-    let minumimEnjoyment: number = 0;
+    let minimumEnjoyment: number = 0;
     let maximumEnjoyment: number = 100;
     let prioritiseIncluded: boolean = false;
+    let blockedTags: string[] = [];
+    let includedTags: string[] = [];
 
     let fileInput: HTMLInputElement;
-
-    let tagStates: Record<string, "none" | "included" | "blocked"> = {};
-    resetTags();
 
     function openFilePicker() {
         fileInput.click();
@@ -48,30 +43,6 @@
 
         const text = await file.text();
         startRun(decodeSave(text));
-    }
-
-    function tagButtonClick(tag: string) {
-        const current = tagStates[tag] || "none";
-
-        if (current === "none") tagStates[tag] = "blocked";
-        else if (current === "blocked") tagStates[tag] = "included";
-        else if (current === "included") tagStates[tag] = "none";
-    }
-
-    function resetTags() {
-        aredlTags.forEach((tag) => {
-            tagStates[tag] = "none";
-        });
-    }
-
-    function fuckCss(tag: string): string {
-        let safe = tag.replace(/[^a-zA-Z0-9_-]/g, "-");
-
-        if (/^[0-9]/.test(safe)) {
-            safe = "_" + safe;
-        }
-
-        return safe;
     }
 
     function runChecks() {
@@ -109,7 +80,7 @@
         let includeDuo = (document.getElementById("duo") as HTMLInputElement)
             .checked;
 
-        if (minumimEnjoyment > maximumEnjoyment) {
+        if (minimumEnjoyment > maximumEnjoyment) {
             edelErrorEl.textContent =
                 "Minimum enjoyment cannot be greater than maximum enjoyment";
             edelErrorEl.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -126,15 +97,11 @@
             extendedListBlock,
             mainListCap,
             extendedListCap,
-            blockedTags: Object.keys(tagStates).filter(
-                (t) => tagStates[t] === "blocked",
-            ),
-            includedTags: Object.keys(tagStates).filter(
-                (t) => tagStates[t] === "included",
-            ),
-            minimumEnjoyment: minumimEnjoyment,
+            blockedTags,
+            includedTags,
+            minimumEnjoyment: minimumEnjoyment,
             maximumEnjoyment: maximumEnjoyment,
-            prioritiseIncluded: prioritiseIncluded,
+            prioritiseIncluded,
         };
 
         createNewRun(
@@ -159,6 +126,8 @@
                 <p>{$listCreationStatus}</p>
             {:else if $listCreationStatus === "idle"}
                 <h2>Start New Run <br /> or Load Save</h2>
+
+                <!-- Main Options -->
                 <div class="options">
                     <input type="checkbox" name="legacy" id="legacy" />
                     <label for="legacy">Include Legacy Levels</label>
@@ -166,9 +135,9 @@
                     <input type="checkbox" name="duo" id="duo" />
                     <label for="duo">Include 2P Levels</label>
                 </div>
-
                 <br />
 
+                <!-- Range Options -->
                 <div class="range">
                     <p class="subtext">
                         Keep both values as 0 for all AREDL levels to be
@@ -202,9 +171,9 @@
                     <br />
                     <p class="subtext error-message" id="range-error"></p>
                 </div>
-
                 <br />
 
+                <!-- Seed Options -->
                 <div class="seed">
                     <input
                         type="number"
@@ -228,168 +197,24 @@
                     <br />
                     <p class="subtext error-message" id="seed-error"></p>
                 </div>
-                <div class="advanced-options">
-                    <div class="advanced-options-con">
-                        <p class="advanced-options-label">Advanced Options</p>
-                        <button
-                            type="button"
-                            class={advancedOptionsCollapsed
-                                ? "hide-button"
-                                : "rotate hide-button"}
-                            onclick={() => {
-                                advancedOptionsCollapsed =
-                                    !advancedOptionsCollapsed;
-                            }}
-                        >
-                            <img
-                                src={DownArrowPng}
-                                class="collapse-arrow"
-                                alt="Toggle advanced options"
-                            />
-                        </button>
-                    </div>
-                    <div class={advancedOptionsCollapsed ? "collapsed" : ""}>
-                        <hr />
-                        <div class="advanced-options-con">
-                            <p>Maximum EDEL Enjoyment:</p>
-                            <input
-                                type="number"
-                                name="enjoyment"
-                                id="enjoyment"
-                                class="number-input"
-                                placeholder="100"
-                                bind:value={maximumEnjoyment}
-                            />
-                        </div>
-                        <p class="subtext">leave as 100 for default settings</p>
-                        <div class="advanced-options-con">
-                            <p>Minimum EDEL Enjoyment:</p>
-                            <input
-                                type="number"
-                                name="enjoyment"
-                                id="enjoyment"
-                                class="number-input"
-                                placeholder="100"
-                                bind:value={minumimEnjoyment}
-                            />
-                        </div>
-                        <p class="subtext">leave as 0 for default settings</p>
-                        <p class="subtext error-message" id="edel-error"></p>
-                        <hr />
-                        <div class="advanced-options-con">
-                            <p>No Main Lists Past:</p>
-                            <input
-                                type="number"
-                                name="main-list-block"
-                                id="main-list-bloack"
-                                class="number-input"
-                                placeholder="100"
-                                bind:value={mainListBlock}
-                                onkeypress={(e) => {
-                                    const allowed = /[0-9.]/;
-                                    if (
-                                        !allowed.test(e.key) ||
-                                        (e.key === "." &&
-                                            e.currentTarget.value.includes("."))
-                                    ) {
-                                        e.preventDefault();
-                                    }
-                                }}
-                            />
-                            <p>%</p>
-                        </div>
-                        <div class="advanced-options-con">
-                            <p>No Extended Lists Past:</p>
-                            <input
-                                type="number"
-                                name="extended-list-block"
-                                id="extended-list-bloack"
-                                class="number-input"
-                                placeholder="100"
-                                bind:value={extendedListBlock}
-                                onkeypress={(e) => {
-                                    if (!/[0-9]/.test(e.key))
-                                        e.preventDefault();
-                                }}
-                            />
-                            <p>%</p>
-                        </div>
-                        <p class="subtext">
-                            leave both as 100% for default settings
-                        </p>
-                        <hr />
-                        <div class="advanced-options-con">
-                            <p>Maximum Main Lists:</p>
-                            <input
-                                type="number"
-                                name="main-list-cap"
-                                id="main-list-cap"
-                                class="number-input"
-                                placeholder="100"
-                                bind:value={mainListCap}
-                                onkeypress={(e) => {
-                                    if (!/[0-9]/.test(e.key))
-                                        e.preventDefault();
-                                }}
-                            />
-                        </div>
-                        <div class="advanced-options-con">
-                            <p>Maximum Extended Lists:</p>
-                            <input
-                                type="number"
-                                name="extended-list-cap"
-                                id="extended-list-cap"
-                                class="number-input"
-                                placeholder="100"
-                                bind:value={extendedListCap}
-                                onkeypress={(e) => {
-                                    if (!/[0-9]/.test(e.key))
-                                        e.preventDefault();
-                                }}
-                            />
-                        </div>
-                        <p class="subtext">
-                            leave both as 100 for default settings
-                        </p>
-                        <hr />
-                        <div class="tag-options-con">
-                            <div class="advanced-options-con">
-                                <label for="priority-switch"
-                                    >Prioritise Included Tags:</label
-                                >
-                                <input
-                                    type="checkbox"
-                                    class="priority-check"
-                                    id="priority-switch"
-                                    bind:checked={prioritiseIncluded}
-                                />
-                            </div>
-                            <p class="subtext">
-                                (Blocked tags are prioritised by default)
-                            </p>
-                            <p>Blocked Tags</p>
-                            <p class="subtext">
-                                (click on a tag to cycle between ignored,
-                                blocked or included)
-                            </p>
-                            {#each aredlTags as tag}
-                                <button
-                                    class={"tag-button " +
-                                        fuckCss(tag) +
-                                        " " +
-                                        tagStates[tag]}
-                                    onclick={() => tagButtonClick(tag)}
-                                >
-                                    {tag}
-                                </button>
-                            {/each}
-                            <button class="reset-tags-btn" onclick={resetTags}
-                                >Reset All Tags</button
-                            >
-                        </div>
-                    </div>
-                </div>
 
+                <!-- Generation -->
+                <RngOptions />
+
+                <!-- Advanced Options -->
+                <AdvancedOptions
+                    bind:mainListBlock
+                    bind:extendedListBlock
+                    bind:mainListCap
+                    bind:extendedListCap
+                    bind:minimumEnjoyment
+                    bind:maximumEnjoyment
+                    bind:prioritiseIncluded
+                    bind:blockedTags
+                    bind:includedTags
+                />
+
+                <!-- Start and Load Save Buttons -->
                 <div class="start-menu-buttons">
                     <button class="start-btn" onclick={runChecks}>Start</button>
                     <button class="load-btn" onclick={openFilePicker}
@@ -443,30 +268,11 @@
 
     .options,
     .range,
-    .seed,
-    .advanced-options {
+    .seed {
         text-align: left;
         outline: 1px solid #444;
         padding: 0.5em;
         margin-bottom: 10px;
-    }
-
-    .advanced-options-con {
-        display: flex;
-        flex-direction: row;
-    }
-
-    .advanced-options-con .number-input {
-        width: 50px;
-        margin-left: 10px;
-    }
-
-    .rotate {
-        rotate: 180deg;
-    }
-
-    .collapsed {
-        display: none;
     }
 
     .number-input {
@@ -486,58 +292,15 @@
         background-color: rgb(100, 180, 100);
         margin-bottom: 4px;
     }
+
     .load-btn {
         background-color: rgb(100, 100, 180);
         margin-bottom: 4px;
     }
-    .random-seed-btn,
-    .reset-tags-btn {
+
+    .random-seed-btn {
         background-color: rgb(100, 120, 160);
         scale: 0.8;
-    }
-    .hide-button {
-        height: 30px;
-        width: 30px;
-        margin-left: 10px;
-        margin-top: -5px;
-        background: none;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        padding: 0;
-    }
-
-    .tag-button {
-        font-size: 0.8em;
-        transform: scale(0.95);
-        transition: all 0.2s ease-in-out;
-    }
-
-    .tag-button:hover {
-        filter: brightness(1.2);
-        transform: scale(1);
-    }
-    .tag-button.none {
-        text-decoration: none;
-        border: 1px #333 solid;
-    }
-
-    .tag-button.included {
-        background-color: rgb(100, 180, 100);
-        text-decoration: none;
-    }
-
-    .tag-button.blocked {
-        background-color: rgb(180, 80, 80);
-        text-decoration: line-through;
-    }
-
-    .collapse-arrow {
-        max-width: 2rem;
-        filter: invert(1);
-        margin: 0;
     }
 
     .subtext {
@@ -547,16 +310,6 @@
 
     .error-message {
         color: red;
-    }
-
-    .priority-check {
-        margin-left: 5px;
-    }
-
-    hr {
-        color: #444;
-        margin-top: 5px;
-        margin-bottom: 5px;
     }
 
     @media (max-width: 830px) {
