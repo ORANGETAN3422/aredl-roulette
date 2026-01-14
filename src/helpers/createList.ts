@@ -7,7 +7,7 @@ let levelsEndpoint = "https://aredl-roulette.vercel.app/api/aredl/levels";
 let storedLevels: any;
 
 export async function createNewRun(seed: number, startRange: number, endRange: number, includeLegacy: boolean, includeDuo: boolean) {
-    listCreationStatus.set("Fethching Levels from AREDL...");
+    listCreationStatus.set("Fetching Levels from AREDL...");
 
     if (!storedLevels) storedLevels = await fetchLevels();
     let levels = structuredClone(storedLevels);
