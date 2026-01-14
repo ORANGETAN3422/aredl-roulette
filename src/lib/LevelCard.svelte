@@ -79,6 +79,10 @@
     }
 
     function handleGiveUp() {
+        const confirmed = confirm(
+            "Are you sure you want to give up? You cannot undo this action unless you have a save file.",
+        );
+        if (!confirmed) return;
         endGame();
         saveLevelPercentage(min_percentage, name);
         completedPercentageLocal = min_percentage;

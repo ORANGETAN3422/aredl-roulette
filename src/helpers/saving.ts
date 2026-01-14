@@ -7,6 +7,7 @@ export interface SaveFile {
     endRange: number;
     current: number;
     current_percentage: number;
+    extra: ExtraDetails;
     levels: Level[];
 }
 
@@ -16,6 +17,61 @@ export interface Level {
     level_id: number;
     completed_percentage: number;
 }
+
+export interface ExtraDetails {
+    mainListBlock: number;
+    extendedListBlock: number;
+    mainListCap: number;
+    extendedListCap: number;
+    blockedTags: string[];
+}
+
+export let aredlTags: string[] = [
+    "1.6",
+    "1.6PS",
+    "1.8",
+    "1.9",
+    "1.9PS",
+    "2.0",
+    "2.1",
+    "2.2",
+    "2P",
+    "Ball",
+    "Bossfight",
+    "Chokepoints",
+    "Circles",
+    "Clicksync",
+    "Duals",
+    "Eon",
+    "Fast-Paced",
+    "Flow",
+    "High CPS",
+    "Learny",
+    "Long",
+    "Mirror",
+    "Memory",
+    "NONG",
+    "Nerve Control",
+    "New Swing",
+    "Old Swing",
+    "Overall",
+    "Precision",
+    "Robot",
+    "Ship",
+    "Slow-Paced",
+    "Timings",
+    "UFO",
+    "Wave",
+    "XL",
+    "XXL",
+    "XXL+",
+    "XXXL",
+    "XXXXL",
+    "XXXXXL",
+    "XXXXXXL",
+    "XXXXXXXL",
+    "XXXXXXXXL"
+]
 
 export function saveToBrowser(save: SaveFile) {
     let stringFile = encodeSave(save);

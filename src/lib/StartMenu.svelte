@@ -3,14 +3,28 @@
     import { createNewRun } from "../helpers/createList";
     import { listCreationStatus, rouletteStatus } from "../helpers/statusStore";
     import { startRun } from "../helpers/progress";
-    import { decodeSave } from "../helpers/saving";
+    import {
+        aredlTags,
+        decodeSave,
+        type ExtraDetails,
+    } from "../helpers/saving";
     import { fly } from "svelte/transition";
+    import AdvancedOptions from "./AdvancedOptions.svelte";
 
-    let isSaveLoaded = false;
-    let currentSeed = getRandInt32();
+    import DownArrowPng from "/down-arrow.png";
 
-    let startingRange = 0;
-    let endingRange = 0;
+    let isSaveLoaded: boolean = false;
+    let advancedOptionsCollapsed: boolean = false;
+    let currentSeed: number = getRandInt32();
+
+    let startingRange: number = 0;
+    let endingRange: number = 0;
+
+    let mainListBlock: number = 100;
+    let extendedListBlock: number = 100;
+    let mainListCap: number = 100;
+    let extendedListCap: number = 100;
+    let blockedTags: string[] = [];
 
     let fileInput: HTMLInputElement;
 
@@ -30,6 +44,24 @@
 
         const text = await file.text();
         startRun(decodeSave(text));
+    }
+
+    function tagButtonClick(tag: string) {
+        if (blockedTags.includes(tag)) {
+            blockedTags = blockedTags.filter((t) => t !== tag);
+        } else {
+            blockedTags = [...blockedTags, tag];
+        }
+    }
+
+    function fuckCss(tag: string): string {
+        let safe = tag.replace(/[^a-zA-Z0-9_-]/g, "-");
+
+        if (/^[0-9]/.test(safe)) {
+            safe = "_" + safe;
+        }
+
+        return safe;
     }
 
     function runChecks() {
@@ -53,12 +85,22 @@
 
         document.getElementById("range-error")!.textContent = "";
         document.getElementById("seed-error")!.textContent = "";
+
+        let extraDetails: ExtraDetails = {
+            mainListBlock: mainListBlock,
+            extendedListBlock: extendedListBlock,
+            mainListCap: mainListCap,
+            extendedListCap: extendedListCap,
+            blockedTags: blockedTags,
+        };
+
         createNewRun(
             currentSeed,
             startingRange,
             endingRange,
             includeLegacy,
             includeDuo,
+            extraDetails,
         );
     }
 
@@ -143,6 +185,14 @@
                     <br />
                     <p class="subtext error-message" id="seed-error"></p>
                 </div>
+                <AdvancedOptions
+                    bind:mainListBlock
+                    bind:extendedListBlock
+                    bind:mainListCap
+                    bind:extendedListCap
+                    bind:blockedTags
+                    {aredlTags}
+                />
 
                 <div class="start-menu-buttons">
                     <button class="start-btn" onclick={runChecks}>Start</button>
@@ -173,7 +223,7 @@
 
         flex-grow: 0;
         flex-shrink: 0;
-        max-width: 600px;
+        max-width: 385px;
         min-width: 320px;
         padding: 1.5em;
 

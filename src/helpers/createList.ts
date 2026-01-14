@@ -1,12 +1,11 @@
-import { currentSaveFile, listCreationStatus } from "./statusStore";
+import { listCreationStatus } from "./statusStore";
+import { fetchLevels } from "./api";
 import { createRNG } from "./rng";
-import { type SaveFile, type Level } from "./saving";
-import { startRun } from "./progress";
-
-let levelsEndpoint = "https://aredl-roulette.vercel.app/api/aredl/levels";
+import { type SaveFile, type Level, type ExtraDetails } from "./saving";
+import { resetRun, startRun } from "./progress";
 let storedLevels: any;
 
-export async function createNewRun(seed: number, startRange: number, endRange: number, includeLegacy: boolean, includeDuo: boolean) {
+export async function createNewRun(seed: number, startRange: number, endRange: number, includeLegacy: boolean, includeDuo: boolean, extra: ExtraDetails) {
     listCreationStatus.set("Fetching Levels from AREDL...");
 
     if (!storedLevels) storedLevels = await fetchLevels();
@@ -23,12 +22,22 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
     if (!includeLegacy) { levels = levels.filter((level: any) => (!level.legacy)); }
     if (!includeDuo) { levels = levels.filter((level: any) => (!level.two_player)); }
 
+    levels = levels.filter((level: any) =>
+        !level.tags.some((tag: string) => extra.blockedTags.includes(tag))
+    );
+
     if (startRange === 0 && endRange === 0) {
         startRange = 1;
         endRange = levels.length + 1;
     }
     if (endRange > levels.length) { endRange = levels.length + 1; }
     levels = levels.filter((level: any) => (level.position >= startRange && level.position <= endRange));
+
+    if (levels.length < 100) {
+        alert("Not enough levels to complete a full roulette. Please adjust your starting settings and try again.");
+        resetRun();
+        return;
+    }
 
     // -------------------------------------------->
     listCreationStatus.set("Creating List...");
@@ -38,17 +47,38 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
         return (rng() * 0x100000000) >>> 0;
     }
 
+    let currentMainLists = 0;
+    let currentExtendedLists = 0;
+
     let selectedLevels: any[] = [];
     for (let i = 0; i < 100; i++) {
-        let index = rngInt(rng) % levels.length;
-        selectedLevels.push(levels[index]);
-        levels.splice(index, 1);
+        let pool = levels.filter((level: any) => {
+            if (isMain(level)) return currentMainLists < extra.mainListCap && i < extra.mainListBlock;
+            if (isExtended(level)) return currentExtendedLists < extra.extendedListCap && i < extra.extendedListBlock;
+            return true;
+        });
+
+        if (pool.length === 0) {
+            alert("Not enough levels to complete a full roulette. Please adjust your starting settings and try again.");
+            resetRun();
+            return;
+        };
+
+        let index = rngInt(rng) % pool.length;
+        let chosen = pool[index];
+
+        if (isMain(chosen)) currentMainLists++;
+        else if (isExtended(chosen)) currentExtendedLists++;
+
+        selectedLevels.push(chosen);
+        levels.splice(levels.indexOf(chosen), 1);
     }
+
+    console.log(extra);
 
     let trimmedArray: Level[] = [];
     selectedLevels.forEach((level) => {
         trimmedArray.push({
-            //id: level.id,
             name: level.name,
             position: level.position,
             level_id: level.level_id,
@@ -65,21 +95,16 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
         endRange: endRange,
         current: 1,
         current_percentage: 1,
-        levels: trimmedArray
+        extra: extra,
+        levels: trimmedArray,
     };
     startRun(saveFile);
 }
 
-async function fetchLevels() {
-    try {
-        const response = await fetch(levelsEndpoint);
-        if (!response.ok) {
-            throw new Error(`Response Status: ${response.status}`);
-        }
+function isMain(level: any) {
+    return level.position >= 1 && level.position <= 75;
+}
 
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error((error as Error).message);
-    }
+function isExtended(level: any) {
+    return level.position > 75 && level.position <= 150;
 }
