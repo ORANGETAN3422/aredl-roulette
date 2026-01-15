@@ -2,21 +2,25 @@
     import { onMount } from "svelte";
     import Chart from "chart.js/auto";
 
+    export let slope: number = 0;
+    export let p1 = { x: 0, y: 5 };
+    export let p2 = { x: 100, y: 5 };
+
     let canvas: HTMLCanvasElement;
     let chart: Chart<"line", { x: number; y: number }[], unknown>;
 
-    let p1 = { x: 0, y: 5 };
-    let p2 = { x: 100, y: 5 };
-    let slope = 0;
-
     let dragging = false;
     let lastMouse = { x: 0, y: 0 };
-    const tolerance = 2;
+    const tolerance = 1.5;
 
-    function recalcLine() {
+    export function recalcLine() {
         slope = Math.round(((p2.y - p1.y) / (p2.x - p1.x)) * 1000) / 100;
         chart.data.datasets[0].data = [p1, p2];
+        chart.data.datasets[0].borderColor = getGradient();
+        chart.update("none");
+    }
 
+    function getGradient() {
         const ctx = canvas.getContext("2d")!;
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
 
@@ -31,8 +35,7 @@
             `rgba(${Math.round(255 * blend)},0,${Math.round(255 * (1 - blend))},1)`,
         );
 
-        chart.data.datasets[0].borderColor = gradient;
-        chart.update("none");
+        return gradient;
     }
 
     function screenToChart(evt: MouseEvent) {
@@ -95,12 +98,6 @@
     }
 
     onMount(() => {
-        const ctx = canvas.getContext("2d")!;
-
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient.addColorStop(0, "blue");
-        gradient.addColorStop(1, "red");
-
         chart = new Chart(canvas, {
             type: "line",
             data: {
@@ -108,7 +105,7 @@
                     {
                         data: [p1, p2],
                         borderWidth: 3,
-                        borderColor: gradient,
+                        borderColor: getGradient(),
                         pointRadius: 0,
                         pointHoverRadius: 0,
                         fill: false,

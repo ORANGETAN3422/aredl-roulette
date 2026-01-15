@@ -1,11 +1,11 @@
 import { listCreationStatus } from "./statusStore";
 import { fetchLevels } from "./api";
-import { createRNG } from "./rng";
-import { type SaveFile, type Level, type ExtraDetails } from "./saving";
+import { createRNG, biasedRandom } from "./rng";
+import { type SaveFile, type Level, type ExtraDetails, type GenerationDetails } from "./saving";
 import { resetRun, startRun } from "./progress";
 let storedLevels: any;
 
-export async function createNewRun(seed: number, startRange: number, endRange: number, includeLegacy: boolean, includeDuo: boolean, extra: ExtraDetails) {
+export async function createNewRun(seed: number, startRange: number, endRange: number, includeLegacy: boolean, includeDuo: boolean, extra: ExtraDetails, generation: GenerationDetails) {
     listCreationStatus.set("Fetching Levels from AREDL...");
 
     if (!storedLevels) storedLevels = await fetchLevels();
@@ -72,7 +72,8 @@ export async function createNewRun(seed: number, startRange: number, endRange: n
             return;
         };
 
-        let index = rngInt(rng) % pool.length;
+        const t = i / 99;
+        let index = biasedRandom(rng, pool.length, generation.slope, t);
         let chosen = pool[index];
 
         if (isMain(chosen)) currentMainLists++;

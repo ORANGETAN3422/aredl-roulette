@@ -2,7 +2,20 @@
     import DownArrowPng from "/down-arrow.png";
     import Graph from "./Graph.svelte";
 
+    let graphRef: Graph;
+
+    export let slope: number = 0;
+    export let p1 = { x: 0, y: 5 };
+    export let p2 = { x: 100, y: 5 };
+
     let generationOptionsCollapsed = false;
+
+    function resetGraph() {
+        slope = 0;
+        p1 = { x: 0, y: 5 };
+        p2 = { x: 100, y: 5 };
+        graphRef.recalcLine();
+    }
 </script>
 
 <div class="generation-options">
@@ -13,7 +26,7 @@
             class={generationOptionsCollapsed
                 ? "hide-button"
                 : "rotate hide-button"}
-            on:click={() =>
+            onclick={() =>
                 (generationOptionsCollapsed = !generationOptionsCollapsed)}
         >
             <img
@@ -24,9 +37,17 @@
         </button>
     </div>
 
+    <p>Difficulty Progression</p>
     <div class={generationOptionsCollapsed ? "collapsed" : ""}>
-        <Graph />
+        <Graph bind:slope bind:p1 bind:p2 bind:this={graphRef} />
     </div>
+    <button class="reset-graph-btn" onclick={resetGraph}>Reset</button>
+    <p class="subtext">
+        Adjusting this graph changes how level difficulty is weighted as the
+        roulette progresses. Red increases the chance of harder levels being
+        generated, while blue increases the chance of easier levels. If the line
+        is straight, then generation is even throughout the entire roulette.
+    </p>
 </div>
 
 <style>
@@ -78,6 +99,11 @@
         justify-content: center;
 
         padding: 0;
+    }
+
+    .reset-graph-btn {
+        background: rgb(100, 100, 180);
+        scale: 0.8;
     }
 
     .collapse-arrow {

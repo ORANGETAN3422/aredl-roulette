@@ -33,6 +33,21 @@ export function createRNG(seed: number) {
     return sfc32(seed2(), seed2(), seed2(), seed2());
 }
 
+export function biasedRandom(rng: () => number, length: number, slope: number, t: number) {
+    const dir = slope <= 0
+        ? 1 - 2 * t      // 1 = low to high
+        : 2 * t - 1;     //-1 = high to low
+    const biasStrength = Math.abs(slope) * Math.abs(dir);
+
+    const exponent = dir >= 0
+        ? 1 + biasStrength * 4
+        : 1 / (1 + biasStrength * 4);
+
+    const r = rng();
+    const biased = Math.pow(r, exponent);
+    return Math.floor(biased * length);
+}
+
 export function getRandInt32() {
     return Math.floor(Math.random() * 4294967295)
 }

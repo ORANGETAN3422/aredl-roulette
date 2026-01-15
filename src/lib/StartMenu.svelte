@@ -3,11 +3,16 @@
     import { createNewRun } from "../helpers/createList";
     import { listCreationStatus, rouletteStatus } from "../helpers/statusStore";
     import { startRun } from "../helpers/progress";
-    import { decodeSave, type ExtraDetails } from "../helpers/saving";
+    import {
+        decodeSave,
+        type ExtraDetails,
+        type GenerationDetails,
+    } from "../helpers/saving";
     import { fly } from "svelte/transition";
 
     import AdvancedOptions from "./StartMenuSections/AdvancedOptions.svelte";
     import RngOptions from "./StartMenuSections/GenerationOptions.svelte";
+    import GenerationOptions from "./StartMenuSections/GenerationOptions.svelte";
 
     let isSaveLoaded: boolean = false;
     let currentSeed: number = getRandInt32();
@@ -24,6 +29,10 @@
     let prioritiseIncluded: boolean = false;
     let blockedTags: string[] = [];
     let includedTags: string[] = [];
+
+    let slope: number;
+    let p1 = { x: 0, y: 5 };
+    let p2 = { x: 100, y: 5 };
 
     let fileInput: HTMLInputElement;
 
@@ -104,6 +113,10 @@
             prioritiseIncluded,
         };
 
+        let generationDetails: GenerationDetails = {
+            slope: slope,
+        };
+
         createNewRun(
             currentSeed,
             startingRange,
@@ -111,6 +124,7 @@
             includeLegacy,
             includeDuo,
             extraDetails,
+            generationDetails,
         );
     }
 
@@ -199,7 +213,7 @@
                 </div>
 
                 <!-- Generation -->
-                <RngOptions />
+                <RngOptions bind:slope bind:p1 bind:p2 />
 
                 <!-- Advanced Options -->
                 <AdvancedOptions

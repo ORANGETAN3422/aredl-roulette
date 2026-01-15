@@ -31,11 +31,7 @@ export interface ExtraDetails {
 }
 
 export interface GenerationDetails {
-    LevelsGetEasier: boolean;
-    LevelsGetHarder: boolean;
-    BellCurveDifficulty: boolean;
-    LastLevelMinPosition: number;
-    LastLevelMaxPosition: number;
+    slope: number;
 }
 
 export let aredlTags: string[] = [
