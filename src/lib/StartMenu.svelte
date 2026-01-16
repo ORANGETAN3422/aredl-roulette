@@ -331,4 +331,45 @@
             margin-top: 170px;
         }
     }
+
+    .start-menu,
+    .number-input,
+    .options,
+    .range,
+    .seed {
+        transition:
+            background-color 0.2s ease,
+            box-shadow 0.2s ease,
+            outline-color 0.2s ease;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .start-menu {
+            background-color: #f4f4f6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            outline: 1px dashed #cfcfcf;
+        }
+
+        .options,
+        .range,
+        .seed {
+            outline: 1px solid #ccc;
+        }
+
+        .number-input {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .subtext {
+            color: #666;
+        }
+
+        .error-message {
+            color: #c00;
+        }
+
+        h2 {
+            text-decoration-color: #aaa;
+        }
+    }
 </style>

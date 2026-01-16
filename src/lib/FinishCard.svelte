@@ -51,4 +51,30 @@
         margin-top: 10px;
         background-color: rgb(100, 100, 180);
     }
+
+    .level-card,
+    .title,
+    .view-all {
+        transition:
+            background-color 0.2s ease,
+            box-shadow 0.2s ease,
+            color 0.2s ease;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .level-card {
+            background-color: #f4f4f6;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            outline: 1px dashed #cfcfcf;
+            color: #111;
+        }
+
+        .title {
+            color: #111;
+        }
+
+        .view-all {
+            background-color: rgb(90, 110, 200);
+        }
+    }
 </style>

@@ -289,4 +289,22 @@
     .priority-check {
         margin-left: 5px;
     }
+
+    @media (prefers-color-scheme: light) {
+        .advanced-options {
+            outline: 1px solid #ccc;
+        }
+
+        .number-input {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .subtext {
+            color: #666;
+        }
+
+        .collapse-arrow {
+            filter: invert(0);
+        }
+    }
 </style>

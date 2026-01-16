@@ -36,18 +36,19 @@
             />
         </button>
     </div>
-
-    <p>Difficulty Progression</p>
     <div class={generationOptionsCollapsed ? "collapsed" : ""}>
+        <hr />
+        <p>Difficulty Progression</p>
         <Graph bind:slope bind:p1 bind:p2 bind:this={graphRef} />
+        <button class="reset-graph-btn" onclick={resetGraph}>Reset</button>
+        <p class="subtext">
+            Adjusting this graph changes how level difficulty is weighted as the
+            roulette progresses. Red increases the chance of harder levels being
+            generated, while blue increases the chance of easier levels. If the
+            line is straight, then generation is even throughout the entire
+            roulette.
+        </p>
     </div>
-    <button class="reset-graph-btn" onclick={resetGraph}>Reset</button>
-    <p class="subtext">
-        Adjusting this graph changes how level difficulty is weighted as the
-        roulette progresses. Red increases the chance of harder levels being
-        generated, while blue increases the chance of easier levels. If the line
-        is straight, then generation is even throughout the entire roulette.
-    </p>
 </div>
 
 <style>
@@ -125,5 +126,23 @@
         color: #444;
         margin-top: 5px;
         margin-bottom: 5px;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .generation-options {
+            outline: 1px solid #ccc;
+        }
+
+        .number-input {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .subtext {
+            color: #666;
+        }
+
+        .collapse-arrow {
+            filter: invert(0);
+        }
     }
 </style>

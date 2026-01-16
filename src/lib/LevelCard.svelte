@@ -449,4 +449,66 @@
             font-size: 0.9rem;
         }
     }
+
+    .level-card,
+    .thumbnail,
+    .title,
+    .right-side input,
+    .done-btn,
+    .giveup-btn {
+        transition:
+            background-color 0.2s ease,
+            box-shadow 0.2s ease,
+            color 0.2s ease;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .level-card {
+            background-color: #f4f4f6;
+            color: #111;
+            outline: 1px dashed #cfcfcf;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .thumbnail {
+            background-color: #e5e5e8;
+        }
+
+        .title {
+            color: #111;
+        }
+
+        .percentage-text {
+            color: rgba(0, 0, 0, 0.65);
+        }
+
+        .creator-title {
+            color: #444;
+        }
+
+        .right-side input[type="number"] {
+            background: #fff;
+            color: #111;
+            border: 1px solid #bbb;
+            box-shadow: 0 0 12px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        .buttons {
+            box-shadow: 0 0 12px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        .done-btn {
+            background-color: rgb(90, 170, 90);
+            color: #fff;
+        }
+
+        .giveup-btn {
+            background-color: rgb(180, 110, 110);
+            color: #fff;
+        }
+
+        .level-thumb {
+            filter: blur(1px) brightness(0.9);
+        }
+    }
 </style>
