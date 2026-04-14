@@ -1,4 +1,7 @@
 <script lang="ts">
+   import HeliopolisThumb from "/special/heliopolis_thumb.jpg";
+   import HeliopolisLevel from "/special/heliopolis_level.webp";
+
     import { fetchLevel } from "../helpers/api";
 
     import { onMount } from "svelte";
@@ -33,16 +36,26 @@
     }
 
     async function fetchLevelDetails() {
-        levelDetails = await fetchLevel(level_id);
-        if (levelDetails) {
-            creator = levelDetails.publisher.global_name;
-            showcaseLink = levelDetails.verifications[0].video_url;
+        if (name === "Heliopolis") {
+            creator = Math.floor(Math.random() * 10000) == 742
+                ? "Drazer"
+                : "Mindcap";
+            showcaseLink = "https://www.youtube.com/watch?v=7yaKGl_2Dsw";
+            showcaseThumb = HeliopolisThumb;
+            levelThumb = HeliopolisLevel;
+            return;
+        } else {
+            levelDetails = await fetchLevel(level_id);
+            if (levelDetails) {
+                creator = levelDetails.publisher.global_name;
+                showcaseLink = levelDetails.verifications[0].video_url;
+            
+                const ytid = getYouTubeID(showcaseLink);
+                if (!ytid) return null;
+                showcaseThumb = await getYoutubeThumbnail(ytid);
 
-            const ytid = getYouTubeID(showcaseLink);
-            if (!ytid) return null;
-            showcaseThumb = await getYoutubeThumbnail(ytid);
-
-            levelThumb = `https://raw.githubusercontent.com/All-Rated-Extreme-Demon-List/Thumbnails/main/levels/full/${level_id}.webp`;
+                levelThumb = `https://raw.githubusercontent.com/All-Rated-Extreme-Demon-List/Thumbnails/main/levels/full/${level_id}.webp`;
+                }
         }
     }
 
@@ -116,7 +129,7 @@
         <div class="info">
             <div class="title-row">
                 <a
-                    href={`https://aredl.net/list/${level_id}`}
+                    href={name === "Heliopolis" ? Math.floor(Math.random() * 1000) == 742 ? "https://www.youtube.com/watch?v=dQw4w9WgXcQ" : "https://gdbrowser.com/136530685" : `https://aredl.net/list/${level_id}`}
                     target="_blank"
                     class="title">#{position} - {name}</a
                 >

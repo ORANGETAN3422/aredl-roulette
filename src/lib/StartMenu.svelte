@@ -14,7 +14,7 @@
     import RngOptions from "./StartMenuSections/GenerationOptions.svelte";
 
     let isSaveLoaded: boolean = false;
-    let currentSeed: number = getRandInt32();
+    let currentSeed: number | string = getRandInt32();
 
     let startingRange: number = 0;
     let endingRange: number = 0;
@@ -189,15 +189,12 @@
                 <!-- Seed Options -->
                 <div class="seed">
                     <input
-                        type="number"
+                        type="text"
                         name="seed"
                         id="seed"
                         class="number-input"
                         placeholder="Seed"
                         bind:value={currentSeed}
-                        onkeypress={(e) => {
-                            if (!/[0-9]/.test(e.key)) e.preventDefault();
-                        }}
                     />
                     <label for="start">Seed</label>
                     <br />
