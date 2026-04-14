@@ -213,7 +213,7 @@
                 </div>
 
                 <!-- Generation -->
-                <RngOptions bind:slope bind:p1 bind:p2 />
+                <!-- <RngOptions bind:slope bind:p1 bind:p2 /> -->
 
                 <!-- Advanced Options -->
                 <AdvancedOptions
