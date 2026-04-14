@@ -12,7 +12,6 @@
 
     import AdvancedOptions from "./StartMenuSections/AdvancedOptions.svelte";
     import RngOptions from "./StartMenuSections/GenerationOptions.svelte";
-    import GenerationOptions from "./StartMenuSections/GenerationOptions.svelte";
 
     let isSaveLoaded: boolean = false;
     let currentSeed: number = getRandInt32();
@@ -114,7 +113,7 @@
         };
 
         let generationDetails: GenerationDetails = {
-            slope: slope,
+            slope: 1,
         };
 
         createNewRun(
@@ -213,7 +212,7 @@
                 </div>
 
                 <!-- Generation -->
-                <!-- <RngOptions bind:slope bind:p1 bind:p2 /> -->
+                <RngOptions bind:slope bind:p1 bind:p2 />
 
                 <!-- Advanced Options -->
                 <AdvancedOptions

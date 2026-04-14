@@ -8,7 +8,7 @@
     export let p1 = { x: 0, y: 5 };
     export let p2 = { x: 100, y: 5 };
 
-    let generationOptionsCollapsed = false;
+    let generationOptionsCollapsed = true;
 
     function resetGraph() {
         slope = 0;
