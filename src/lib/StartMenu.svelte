@@ -113,7 +113,7 @@
         };
 
         let generationDetails: GenerationDetails = {
-            slope: 1,
+            slope: slope,
         };
 
         createNewRun(
